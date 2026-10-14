@@ -5,7 +5,7 @@ const referee = require('../dist/technology.js');
 function world() {
   const tiles = Array.from({ length: 48 }, (_, i) => ({ type: i === 0 ? 'rock' : i === 1 ? 'forest' : 'grass', fibre: 4, wood: 3, stone: 3 }));
   const person = { name: 'Eve', x: 0, y: 0, observed: [], knowledge: [], supplies: { wood: 2, stone: 2, fibre: 3 }, food: 8, water: 8, genes: { curiosity: 60, creativity: 60 } };
-  const state = { version: 2, day: 3, weather: 'clear', tiles, agents: [person], tech: { nodes: [], trials: [] } };
+  const state = { version: 2, width: 8, height: 6, day: 3, weather: 'clear', tiles, agents: [person], tech: { nodes: [], trials: [] } };
   return { state, person };
 }
 
