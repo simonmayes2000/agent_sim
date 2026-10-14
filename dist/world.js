@@ -30,7 +30,7 @@ function maybeExpand(state,rng){if(state.width>=16||state.explored.length<(state
   state.explored=state.explored.map(i=>(Math.floor(i/oldW)+1)*W+(i%oldW)+1);
   for(const a of state.agents){a.x++;a.y++;a.seenTiles=(a.seenTiles||[]).map(i=>(Math.floor(i/oldW)+1)*W+(i%oldW)+1)}
   for(const c of state.clans){c.x++;c.y++}
-  for(const m of state.interventions)if(m.x!=null){m.x++;m.y++}
+  for(const m of state.interventions){if(m.x!=null){m.x++;m.y++}if(m.affected)m.affected=m.affected.map(i=>(Math.floor(i/oldW)+1)*W+(i%oldW)+1)}
   return {oldW,oldH,width:W,height:H};
 }
 function updateClans(state,approve=()=>true){const alive=state.agents.filter(a=>a.alive),visited=new Set(),groups=[];
@@ -52,21 +52,33 @@ function build(state,a,node,prototype=false){const spec=builtEffects[node.effect
   const structure={kind:spec[0],name:spec[1],icon:spec[2],techId:node.id,day:state.day,builder:a.name,clanId:a.clanId};t.structures.push(structure);return structure;
 }
 function clampText(v,max){return String(v||'').trim().slice(0,max)}
-function intervene(state,command){const kind=command.kind,idx=Number(command.tileIndex),valid=Number.isInteger(idx)&&idx>=0&&idx<state.tiles.length,t=valid?state.tiles[idx]:null;let text, x=t?idx%state.width:null,y=t?Math.floor(idx/state.width):null,category=null,itemId=null;
+function intervene(state,command){const kind=command.kind,idx=Number(command.tileIndex),valid=Number.isInteger(idx)&&idx>=0&&idx<state.tiles.length,t=valid?state.tiles[idx]:null;let text, x=t?idx%state.width:null,y=t?Math.floor(idx/state.width):null,category=null,itemId=null,affected=null;
   if(kind==='add'){
-    if(!t)throw Error('Choose a tile first.');let name=clampText(command.name,40),appearance=clampText(command.appearance,80);if(!name)throw Error('Give the object a name.');category=command.category;if(!categories.includes(category))throw Error('Choose what the object does.');let quantity=Math.max(1,Math.min(30,Math.floor(Number(command.quantity)||1)));itemId=state.nextItemId++;t.items.push({id:itemId,name,appearance:appearance||'an unfamiliar object',category,quantity,added:state.day});text=`The overseer places ${quantity} × ${name} at (${x+1}, ${y+1}).`;
+    if(!t)throw Error('Choose a tile first.');let name=clampText(command.name,80),appearance=clampText(command.appearance,80);if(!name)throw Error('Give the object a name.');category=command.category;if(!categories.includes(category))throw Error('Choose what the object does.');let quantity=Math.max(1,Math.min(99999,Math.floor(Number(command.quantity)||1)));itemId=state.nextItemId++;t.items.push({id:itemId,name,appearance:appearance||'an unfamiliar object',category,quantity,added:state.day});text=`The overseer places ${quantity} × ${name} at (${x+1}, ${y+1}).`;
   }else if(kind==='remove'){
-    category=command.category;if(!['food','water','wood','stone','fibre'].includes(category))throw Error('Choose a resource to remove.');let amount=Math.max(1,Math.min(999,Math.floor(Number(command.quantity)||1))),remaining=amount,scope=command.scope==='world'?'world':'tile';if(scope==='tile'&&!t)throw Error('Choose a tile first.');let targets=scope==='world'?state.tiles:[t];for(const spot of targets){for(const item of spot.items)if(item.category===category&&remaining>0){let take=Math.min(item.quantity,remaining);item.quantity-=take;remaining-=take}spot.items=spot.items.filter(item=>item.quantity>0);if(remaining>0){let take=Math.min(spot[category]||0,remaining);spot[category]-=take;remaining-=take}if(!remaining)break}text=`The overseer removes ${amount-remaining} ${category} from ${scope==='world'?'the world':`(${x+1}, ${y+1})`}.`;if(scope==='world'){x=null;y=null}
+    category=command.category;if(!['food','water','wood','stone','fibre'].includes(category))throw Error('Choose a resource to remove.');let amount=Math.max(1,Math.min(99999,Math.floor(Number(command.quantity)||1))),remaining=amount,scope=command.scope==='world'?'world':'tile';if(scope==='tile'&&!t)throw Error('Choose a tile first.');let targets=scope==='world'?state.tiles:[t];affected=[];for(const spot of targets){let before=remaining;for(const item of spot.items)if(item.category===category&&remaining>0){let take=Math.min(item.quantity,remaining);item.quantity-=take;remaining-=take}spot.items=spot.items.filter(item=>item.quantity>0);if(remaining>0){let take=Math.min(spot[category]||0,remaining);spot[category]-=take;remaining-=take}if(remaining<before)affected.push(spot.i);if(!remaining)break}text=`The overseer removes ${amount-remaining} ${category} from ${scope==='world'?'the world':`(${x+1}, ${y+1})`}.`;if(scope==='world'){x=null;y=null}
   }else if(kind==='weather'){
-    if(!['clear','rain','wind'].includes(command.weather))throw Error('Choose a weather condition.');state.weather=command.weather;state.weatherUntil=state.day+Math.max(1,Math.min(20,Math.floor(Number(command.duration)||3)));x=null;y=null;text=`The overseer changes the weather to ${command.weather} for ${state.weatherUntil-state.day} days.`;
+    if(!['clear','rain','wind'].includes(command.weather))throw Error('Choose a weather condition.');state.weather=command.weather;state.weatherUntil=state.day+Math.max(1,Math.min(999,Math.floor(Number(command.duration)||3)));x=null;y=null;text=`The overseer changes the weather to ${command.weather} for ${state.weatherUntil-state.day} days.`;
   }else if(kind==='terrain'){
     if(!t)throw Error('Choose a tile first.');if(!['grass','forest','berry','water','rock'].includes(command.terrain))throw Error('Choose terrain.');let fresh=tile(command.terrain,idx);fresh.visits=t.visits;fresh.items=t.items;fresh.structures=command.terrain==='water'?[]:t.structures;fresh.territory=t.territory;state.tiles[idx]=fresh;text=`The overseer changes (${x+1}, ${y+1}) into ${command.terrain}.`;
   }else throw Error('Choose an intervention.');
-  const entry={id:state.nextInterventionId++,day:state.day,kind,x,y,category,itemId,text};state.interventions.push(entry);if(state.interventions.length>200)state.interventions.shift();return entry;
+  const entry={id:state.nextInterventionId++,day:state.day,kind,x,y,category,itemId,text,affected};state.interventions.push(entry);if(state.interventions.length>200)state.interventions.shift();return entry;
 }
-function relevantChanges(state,a){return state.interventions.filter(m=>!a.noticedInterventions.includes(m.id)&&(m.x==null||Math.abs(m.x-a.x)+Math.abs(m.y-a.y)<=2))}
+function relevantChanges(state,a){return state.interventions.filter(m=>!a.noticedInterventions.includes(m.id)&&(m.affected?m.affected.some(i=>Math.abs(i%state.width-a.x)+Math.abs(Math.floor(i/state.width)-a.y)<=2):m.x==null||Math.abs(m.x-a.x)+Math.abs(m.y-a.y)<=2))}
+function enact(state,plan){let entry;if(plan.effect.scope==='world'&&['add','terrain'].includes(plan.effect.kind)){
+  const e=plan.effect;
+  for(let i=0;i<state.tiles.length;i++){const t=state.tiles[i];if(e.kind==='add'){t.items.push({id:state.nextItemId++,name:e.name,appearance:e.appearance,category:e.category,quantity:e.quantity,added:state.day})}
+    else{const fresh=tile(e.terrain,i);fresh.visits=t.visits;fresh.items=t.items;fresh.structures=e.terrain==='water'?[]:t.structures;fresh.territory=t.territory;state.tiles[i]=fresh}}
+  entry={id:state.nextInterventionId++,day:state.day,kind:e.kind,x:null,y:null,category:e.category||null,itemId:null,text:`The overseer changes ${state.tiles.length} places across the world.`};state.interventions.push(entry);if(state.interventions.length>200)state.interventions.shift();
+ }else if(plan.effect.kind==='person'){
+  const a=state.agents.find(a=>a.id===plan.effect.targetId);if(!a)throw Error('That person does not exist.');
+  if(plan.effect.mode==='kill'){a.health=0;a.alive=false;a.death=state.day}else if(plan.effect.mode==='hurt'){a.health=Math.max(0,a.health-plan.effect.quantity);if(!a.health){a.alive=false;a.death=state.day}}else a.health=Math.min(100,a.health+plan.effect.quantity);
+  entry={id:state.nextInterventionId++,day:state.day,kind:'person',x:a.x,y:a.y,category:null,itemId:null,text:plan.interpretation,killed:!a.alive};state.interventions.push(entry);if(state.interventions.length>200)state.interventions.shift();
+ }else entry=intervene(state,plan.effect);
+ entry.description=plan.description;entry.perception=plan.perception;entry.interpretation=plan.interpretation;entry.text=`${plan.description} → ${entry.text}`;return entry;
+}
 function take(state,t,category){const item=t.items.find(i=>i.category===category&&i.quantity>0);if(item){item.quantity--;if(!item.quantity)t.items=t.items.filter(i=>i.quantity>0);return item}if((t[category]||0)>0){t[category]--;return null}return false}
 function available(t,category){return (t[category]||0)+t.items.filter(i=>i.category===category).reduce((n,i)=>n+i.quantity,0)}
-root.WorldSystems={tile,ensure,markVisit,maybeExpand,updateClans,build,intervene,relevantChanges,take,available};
+root.WorldSystems={tile,ensure,markVisit,maybeExpand,updateClans,build,intervene,enact,relevantChanges,take,available};
 if(typeof module!=='undefined')module.exports=root.WorldSystems;
 })(typeof window!=='undefined'?window:globalThis);
