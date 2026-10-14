@@ -82,10 +82,10 @@ speak=function(a,text){
   if(!window.AGENT_API_URL||!a.alive||modelTurnsThisDay>=6||now-lastModelRequestAt<10000)return;
   modelTurnsThisDay++;
   lastModelRequestAt=now;
-  const context={day:state.day,weather:state.weather,food:a.food,water:a.water,nearby:peopleNear(a).map(b=>b.name),knowledge:a.knowledge.map(id=>TechReferee.get(state,id)?.name).filter(Boolean),situation:text};
-  fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:'You are '+a.name+' in a closed world. You know only what you have observed or learned from others. Speak one brief natural sentence to a nearby person based only on this context: '+JSON.stringify(context),max_output_tokens:200})})
+  const context={day:state.day,weather:state.weather,food:a.food,water:a.water,health:a.health,observed:a.observed,nearby:peopleNear(a).map(b=>b.name),knowledge:a.knowledge.map(id=>TechReferee.get(state,id)?.name).filter(Boolean),situation:text};
+  fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:'You are '+a.name+' in a closed world. Rephrase the situation as one short first-person sentence to a nearby person. The context is your entire knowledge. Do not add any new object, place, discovery, cause, or history. Use only facts and concrete words found in this context: '+JSON.stringify(context),max_output_tokens:200})})
     .then(r=>{if(!r.ok)throw Error('Agent API returned '+r.status);return r.json()})
-    .then(d=>{let line=String(d&&d.text||'').trim();if(line&&line.length<280){event('speech',a.name,line);save();render()}})
+    .then(d=>{let line=String(d&&d.text||'').trim();if(GroundedSpeech.accepts(line,context)){event('speech',a.name,line);save();render()}})
     .catch(error=>console.warn('Agent dialogue unavailable:',error.message));
 };
 })();
