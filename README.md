@@ -6,13 +6,23 @@ Play the private Site: https://the-first-world-simulator.creamdaisy32.chatgpt.si
 
 ## Run locally
 
-Serve the `dist` folder with any static web server, for example:
+For autonomous source governance, start the local council server from the repository:
+
+```sh
+node scripts/source-council.mjs --port 8000
+```
+
+Open http://127.0.0.1:8000. Every three world days, the ten referees inspect the current world for a concrete realism problem. A proposed amendment needs all ten votes, must pass the tests, and is then committed to `dist/realism-rules.js`. The game applies the changed rule without losing the current world. Its audit trail is written to `work/source-council.jsonl`, and the council panel shows whether this local service is connected. Use `--push` only when GitHub authentication is configured and automatic pushes are wanted. The service does not publish the hosted Site.
+
+To run the static game without source evolution, serve `dist` with any static web server, for example:
 
 ```sh
 python3 -m http.server 8000 --directory dist
 ```
 
 Open http://localhost:8000.
+
+You can also review an exported world once with `node scripts/source-council.mjs --once path/to/export.json`. The source council changes rules only when it finds supporting evidence; it can leave the source untouched.
 
 ## Simulation rules
 
@@ -23,4 +33,4 @@ Open http://localhost:8000.
 - People with strong mutual ties can form clans. Their territory, settlement marker, and membership appear on the map and in the clan record.
 - The overseer can speak to a person without changing their memory. The overseer can also describe a world change in free text. Ten local referees review its interpretation, and the preview states the exact effect before it is enacted. The interpreter handles resource additions and removal, terrain, weather, and changes to a named person's health or life. Unrecognized descriptions create a persistent mystery at the selected place. Agents encounter perceptible effects and discuss them without learning the overseer's wording or intent.
 
-This release uses local decision rules, procedural referees, and generated dialogue. It does not call a live ChatGPT model. Free text is interpreted by finite rules, so descriptions outside those rules become encounterable mysteries rather than arbitrary new physics. The technology referee uses finite material affordance rules, but there is no predefined visible technology tree or fixed unlock order. The interface and simulation state are stored in the browser's local storage. Use **Export log** to back up a particular world's history, including its technology graph and experiment record; GitHub preserves the source code, not browser save data.
+This release uses local decision rules, procedural referees, and generated dialogue. It does not call a live ChatGPT model because no model API key is available. The source council can amend supported executable rules, not generate arbitrary JavaScript changes. The hosted Site is static, so its source cannot rewrite itself while deployed; source governance runs through the local server and requires a later deployment for hosted visitors to receive changes. Free text is interpreted by finite rules, so descriptions outside those rules become encounterable mysteries rather than arbitrary new physics. The technology referee uses finite material affordance rules, but there is no predefined visible technology tree or fixed unlock order. The interface and simulation state are stored in the browser's local storage. Use **Export log** to back up a particular world's history, including its technology graph and experiment record; GitHub preserves the source code, not browser save data.
