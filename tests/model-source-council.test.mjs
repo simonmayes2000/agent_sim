@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {runModelCouncil,inspectPatch} from '../scripts/model-source-council.mjs';
+const sandboxed=process.env.SOURCE_COUNCIL_SANDBOX==='1';
+function git(dir,...args){const r=spawnSync('git',args,{cwd:dir,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout}
+function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'first-world-model-test-'));fs.mkdirSync(path.join(dir,'dist'));fs.mkdirSync(path.join(dir,'tests'));const file=path.join(dir,'dist','realism-rules.js');fs.writeFileSync(file,'module.exports={shelterRequiresPhysicalSite:false};\n');fs.writeFileSync(path.join(dir,'tests','rules.test.js'),"const test=require('node:test');test('source loads',()=>require('../dist/realism-rules.js'));\n");git(dir,'init','-q');git(dir,'add','.');git(dir,'-c','user.name=Test','-c','user.email=test@localhost','commit','-qm','baseline');fs.writeFileSync(file,'module.exports={shelterRequiresPhysicalSite:true};\n');const patch=git(dir,'diff','--','dist/realism-rules.js');git(dir,'restore','--','dist/realism-rules.js');return {dir,file,patch}}
+test('ten model roles can approve a source diff which is isolated, tested and committed',{skip:sandboxed},async()=>{const {dir,file,patch}=fixture();try{let calls=0;const agent=async()=>{calls++;return calls===1?{rationale:'Physical shelters should only protect occupants',patch}:{approve:true,reason:'This improves spatial realism.'}};const result=await runModelCouncil({day:10,weather:'rain',tiles:[],agents:[],events:[]},dir,agent);assert.equal(result.status,'committed',result.reason);assert.equal(result.votes.length,10);assert.equal(calls,10);assert.match(fs.readFileSync(file,'utf8'),/true/);assert.match(git(dir,'log','-1','--format=%s'),/Source council:/)}finally{fs.rmSync(dir,{recursive:true,force:true})}});
+test('a model referee veto prevents source mutation',{skip:sandboxed},async()=>{const {dir,file,patch}=fixture();try{let calls=0;const agent=async()=>{calls++;return calls===1?{rationale:'A proposed change',patch}:{approve:false,reason:'Evidence is insufficient.'}};const result=await runModelCouncil({day:10,tiles:[],agents:[]},dir,agent);assert.equal(result.status,'rejected');assert.match(fs.readFileSync(file,'utf8'),/false/)}finally{fs.rmSync(dir,{recursive:true,force:true})}});
+test('the model patch boundary excludes deployment and governance files',()=>{assert.throws(()=>inspectPatch('diff --git a/.openai/hosting.json b/.openai/hosting.json\n'));assert.throws(()=>inspectPatch('diff --git a/scripts/source-council.mjs b/scripts/source-council.mjs\n'))});
