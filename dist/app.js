@@ -5,7 +5,7 @@ const tileTypes=['forest','grass','berry','grass','rock','grass','forest','grass
 const geneNames=['curiosity','empathy','caution','stamina','sociability','resilience','patience','creativity','awareness','generosity','adaptability','boldness'];
 const firstNames=['Ari','Nia','Sol','Mira','Ilan','Tala','Oren','Luma','Rin','Koa','Asha','Vale','Noa','Sera','Elio','Uma'];
 const $=s=>document.querySelector(s); const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state, timer=null, speed=1, selected=null, selectedTile=null, filter='all', activeTab='life', sourceCouncilConnected=false, sourceCouncilPending=false, sourceCouncilHistory=[], sourceCouncilMode='procedural', modelTurnsThisDay=0, modelTurnsDay=-1, lastModelRequestAt=0;
+let state, timer=null, speed=1, selected=null, selectedTile=null, filter='all', activeTab='life', sourceCouncilConnected=false, sourceCouncilPending=false, sourceCouncilHistory=[], sourceCouncilMode='procedural', modelTurnsThisDay=0, modelTurnsDay=-1, lastModelRequestAt=0, modelConversationPending=false;
 function rng(){state.seed=(Math.imul(1664525,state.seed)+1013904223)>>>0;return state.seed/4294967296}
 function pick(a){return a[Math.floor(rng()*a.length)]}
 function clamp(n,a=0,b=100){return Math.max(a,Math.min(b,n))}
@@ -72,24 +72,47 @@ async function sendWorldToSourceCouncil(){if(sourceCouncilPending)return;sourceC
 function councilRecord(){Council.ensure(state);let c=state.council;modal(`<div class="kicker">WORLD COUNCIL / TEN REFEREES</div><h2>What may happen here?</h2><p>Ten independent rule referees review consequential proposals. Each checks its own domain. A change needs at least two approvals and no objections. Decisions are saved with the world.</p><div class="council-stats"><strong>${c.approved} allowed</strong><strong>${c.blocked} blocked</strong></div><div class="source-council-info"><strong>SOURCE COUNCIL · ${sourceCouncilConnected?'CONNECTED LOCALLY':'NOT CONNECTED'}</strong><p>${sourceCouncilConnected?`Every three days, ten ${sourceCouncilMode==='codex'?'model':'procedural'} referees review evidence from this world. They output source-change proposals for you to review and implement manually.`:'This hosted game cannot rewrite its own deployed files. Run the local source council service to receive source proposals.'}</p>${sourceCouncilHistory.slice(0,3).map(h=>`<div class="source-proposal"><div class="fact-row"><span>${esc(h.proposal?.evidence||h.proposal?.rationale||h.reason||'Source review')}</span><span>${esc(h.status||'')}</span></div>${h.sourceChange?`<p>${esc(h.sourceFile||'Source')} · ${esc(h.sourceChange)}</p>`:''}${h.proposal?.patch?`<details><summary>VIEW PATCH TO APPLY MANUALLY</summary><pre>${esc(h.proposal.patch)}</pre></details>`:''}</div>`).join('')}</div><div class="trial-record">${c.decisions.slice(-20).reverse().map(d=>`<details class="council-decision"><summary><span>Day ${d.day} · ${esc(d.label)}</span><strong>${d.approved?'ALLOWED':'BLOCKED'}</strong></summary>${d.votes.map(v=>`<div class="fact-row"><span>${esc(v.name)} · ${esc(v.reason)}</span><span>${v.vote.toUpperCase()}</span></div>`).join('')}</details>`).join('')||'<p class="tech-empty">The council has not reviewed an event yet. Step the world forward.</p>'}</div>`)}
 function techTree(){let nodes=state.tech.nodes, depth=id=>{let n=TechReferee.get(state,id);return n?.parents?.length?1+Math.max(...n.parents.map(depth)):0},levels=[...new Set(nodes.map(n=>depth(n.id)))].sort((a,b)=>a-b);modal(`<div class="kicker">THE HIDDEN REFEREE'S RECORD</div><h2>Emergent technology</h2><p>No full tree is shown in advance. People test materials they have observed and carry. A successful experiment becomes a node; later inventions can depend on it. These are the paths this world has actually taken.</p><div class="tech-graph">${nodes.length?levels.map(level=>`<div class="tech-level"><div class="lineage-label">${level===0?'FIRST EXPERIMENTS':'DEPENDENCY DEPTH '+level}</div><div class="tech-nodes">${nodes.filter(n=>depth(n.id)===level).map(n=>`<div class="tech-node"><span>DAY ${String(n.day).padStart(2,'0')} · ${esc(n.discoverer)}</span><strong>${esc(n.name)}</strong><p>${esc(n.detail)}</p><small>${n.parents.length?'BUILT FROM '+n.parents.map(id=>esc(TechReferee.get(state,id)?.name||'an earlier finding')).join(' + '):'TESTED '+n.materials.map(esc).join(' + ')}</small></div>`).join('')}</div></div>`).join(''):'<p class="tech-empty">No successful experiments yet. Let the world run to see its first branch.</p>'}</div><div class="trial-record"><div class="lineage-label">RECENT EXPERIMENTS</div>${state.tech.trials.slice(-8).reverse().map(t=>`<div class="fact-row"><span>Day ${t.day} · ${esc(t.person)} tried ${esc(t.method)} (${t.materials.map(esc).join(', ')})</span><span>${t.result.toUpperCase()}</span></div>`).join('')||'<p class="tech-empty">The inhabitants have not experimented yet.</p>'}</div>`)}
 function pause(){clearInterval(timer);timer=null;render()}
-function play(){if(timer){pause();return}timer=setInterval(day,Math.max(110,1200/speed));render();if(state.day===1){let a=living().find(person=>peopleNear(person).length)||living()[0];if(a)requestModelVoice(a,state.events.find(e=>e.type==='speech'&&e.who===a.name)?.text||a.lastAction)}}
+function play(){if(timer){pause();return}timer=setInterval(day,Math.max(110,1200/speed));render();if(state.day===1)agentConversation()}
 load();render();connectSourceCouncil();$('#play-btn').onclick=play;$('#step-btn').onclick=day;document.querySelectorAll('.speed').forEach(el=>el.onclick=()=>{speed=Number(el.dataset.speed);document.querySelectorAll('.speed').forEach(x=>x.classList.toggle('active',x===el));if(timer){clearInterval(timer);timer=setInterval(day,Math.max(110,1200/speed))}});$('#about-btn').onclick=about;$('#lineage-btn').onclick=lineage;$('#clans-btn').onclick=clanRecord;$('#council-btn').onclick=councilRecord;$('#overseer-btn').onclick=overseer;$('#tech-tree-btn').onclick=techTree;$('#filter-btn').onclick=()=>{let choices=['all','speech','discovery','birth','death','observation','observer','experiment','build','clan','exploration','overseer','world'];filter=choices[(choices.indexOf(filter)+1)%choices.length];renderFeed()};$('#export-btn').onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`first-world-day-${String(state.day).padStart(3,'0')}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000)};$('#close-drawer').onclick=closeDrawer;$('#drawer-overlay').onclick=closeDrawer;$('#close-modal').onclick=()=>$('#modal-overlay').classList.add('hidden');$('#modal-overlay').onclick=e=>{if(e.target===$('#modal-overlay'))$('#modal-overlay').classList.add('hidden')};document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('#modal-overlay').classList.add('hidden')}});
 const localSpeak=speak;
 function modelStatus(text){const el=$('#model-status');if(el)el.textContent=text}
-function requestModelVoice(a,text){
-  if(!a)return false;
+async function requestModelVoice(a,text,force=false){
+  if(!a)return null;
   if(modelTurnsDay!==state.day){modelTurnsDay=state.day;modelTurnsThisDay=0}
   const now=Date.now();
-  if(!window.AGENT_API_URL||!a.alive||modelTurnsThisDay>=6||now-lastModelRequestAt<10000)return false;
+  if(!window.AGENT_API_URL||!a.alive)return null;
+  if(modelTurnsThisDay>=6){modelStatus('MODEL DIALOGUE LIMIT REACHED · STEP TO ANOTHER DAY');return null}
+  if(!force&&now-lastModelRequestAt<10000)return null;
   modelTurnsThisDay++;
   lastModelRequestAt=now;
   modelStatus(a.name.toUpperCase()+' IS FORMING A REPLY…');
-  const context={day:state.day,weather:state.weather,food:a.food,water:a.water,health:a.health,observed:a.observed,nearby:peopleNear(a).map(b=>b.name),knowledge:a.knowledge.map(id=>TechReferee.get(state,id)?.name).filter(Boolean),situation:text};
-  fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:'You are '+a.name+' in a closed world. Rephrase the situation as one short first-person sentence to a nearby person. The context is your entire knowledge. Do not add any new object, place, discovery, cause, or history. Use only words found in the context plus basic conversational words. Context: '+JSON.stringify(context),max_output_tokens:200})})
-    .then(r=>{if(!r.ok)throw Error('Agent API returned '+r.status);return r.json()})
-    .then(d=>{let line=String(d&&d.text||'').trim();if(GroundedSpeech.accepts(line,context)){event('speech',a.name+' ✦',line);save();render();modelStatus('MODEL DIALOGUE ACTIVE · '+a.name.toUpperCase()+' SPOKE')}else{modelStatus('MODEL REPLY USED UNKNOWN WORDS · LOCAL SPEECH KEPT');console.warn('Ungrounded agent dialogue omitted:',line)}})
-    .catch(error=>{modelStatus('MODEL DIALOGUE UNAVAILABLE · '+error.message.toUpperCase());console.warn('Agent dialogue unavailable:',error.message)});
-  return true;
-};
+  const context={day:state.day,weather:state.weather,food:a.food,water:a.water,health:a.health,observed:a.observed||[],nearby:peopleNear(a).map(b=>b.name),knowledge:a.knowledge.map(id=>TechReferee.get(state,id)?.name).filter(Boolean),situation:text};
+  try{
+    const response=await fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:'You are '+a.name+' in a closed world. Speak one short first-person sentence to a nearby person. The context is your entire knowledge. Do not add a new object, place, discovery, cause, or history. Use mostly words from this context: '+JSON.stringify(context),max_output_tokens:200})});
+    if(!response.ok)throw Error('Agent API returned '+response.status);
+    const data=await response.json(),line=String(data&&data.text||'').trim();
+    if(!GroundedSpeech.accepts(line,context)){modelStatus('MODEL REPLY USED UNKNOWN FACTS · TRY HEAR AGENTS AGAIN');console.warn('Ungrounded agent dialogue omitted:',line);return null}
+    event('speech',a.name+' ✦',line);save();render();modelStatus('MODEL DIALOGUE ACTIVE · '+a.name.toUpperCase()+' SPOKE');
+    return line;
+  }catch(error){modelStatus('MODEL DIALOGUE UNAVAILABLE · '+error.message.toUpperCase());console.warn('Agent dialogue unavailable:',error.message);return null}
+}
+async function agentConversation(){
+  if(modelConversationPending)return;
+  const first=living().find(person=>peopleNear(person).length);
+  if(!first){modelStatus('TWO AGENTS MUST BE NEAR EACH OTHER TO TALK');return}
+  const second=peopleNear(first)[0];
+  modelConversationPending=true;
+  $('#conversation-btn').disabled=true;
+  try{
+    const opening=state.events.find(e=>e.type==='speech'&&e.who===first.name)?.text||'I am '+first.lastAction.toLowerCase()+'.';
+    const firstLine=await requestModelVoice(first,opening,true);
+    if(firstLine)await requestModelVoice(second,'I heard '+first.name+' say: '+firstLine+' I want to answer using only what I know.',true);
+  }finally{modelConversationPending=false;$('#conversation-btn').disabled=false}
+}
 speak=function(a,text){localSpeak(a,text);requestModelVoice(a,text)};
+$('#conversation-btn').onclick=agentConversation;
+if(window.AGENT_API_URL&&!state.modelIntroDone&&living().length>=2){
+  state.modelIntroDone=true;save();
+  setTimeout(agentConversation,500);
+}
 })();
