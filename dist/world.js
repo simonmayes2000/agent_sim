@@ -78,7 +78,7 @@ function enact(state,plan){let entry;if(plan.effect.scope==='world'&&['add','ter
  entry.description=plan.description;entry.perception=plan.perception;entry.interpretation=plan.interpretation;entry.text=`${plan.description} → ${entry.text}`;return entry;
 }
 function take(state,t,category){const item=t.items.find(i=>i.category===category&&i.quantity>0);if(item){item.quantity--;if(!item.quantity)t.items=t.items.filter(i=>i.quantity>0);return item}if((t[category]||0)>0){t[category]--;return null}return false}
-function available(t,category){return (t[category]||0)+t.items.filter(i=>i.category===category).reduce((n,i)=>n+i.quantity,0)}
+function available(t,category){if(!t)return 0;return (t[category]||0)+(t.items||[]).filter(i=>i.category===category).reduce((n,i)=>n+i.quantity,0)}
 root.WorldSystems={tile,ensure,markVisit,maybeExpand,updateClans,build,intervene,enact,relevantChanges,take,available};
 if(typeof module!=='undefined')module.exports=root.WorldSystems;
 })(typeof window!=='undefined'?window:globalThis);
