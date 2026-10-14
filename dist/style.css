@@ -11,3 +11,4 @@
 .overseer-form textarea{box-sizing:border-box;width:100%;min-height:135px;resize:vertical;padding:12px;background:#f5f7f2;border:1px solid #b9c8bc;border-radius:6px;color:#203729;font:inherit;line-height:1.5}.edict-preview{padding:11px 13px;margin:12px 0;background:#e7eee7;border-left:3px solid #668768;color:#254131;font-size:.85rem}
 
 .source-council-info{margin:1rem 0;padding:1rem;background:#e8eee7;border-radius:6px}.source-council-info p{margin:.5rem 0;color:#496155;font-size:.88rem}
+.source-proposal{border-top:1px solid #cbd7d0;padding:.65rem 0}.source-proposal pre{max-height:220px;overflow:auto;padding:.7rem;background:#17231c;color:#d7e8d9;font:11px/1.45 monospace;white-space:pre-wrap}.source-proposal summary{cursor:pointer;font-size:.75rem;color:#49674d}
