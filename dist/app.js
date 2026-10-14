@@ -5,7 +5,7 @@ const tileTypes=['forest','grass','berry','grass','rock','grass','forest','grass
 const geneNames=['curiosity','empathy','caution','stamina','sociability','resilience','patience','creativity','awareness','generosity','adaptability','boldness'];
 const firstNames=['Ari','Nia','Sol','Mira','Ilan','Tala','Oren','Luma','Rin','Koa','Asha','Vale','Noa','Sera','Elio','Uma'];
 const $=s=>document.querySelector(s); const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let state, timer=null, speed=1, selected=null, selectedTile=null, filter='all', activeTab='life', sourceCouncilConnected=false, sourceCouncilPending=false, sourceCouncilHistory=[], sourceCouncilMode='procedural', modelTurnsThisDay=0;
+let state, timer=null, speed=1, selected=null, selectedTile=null, filter='all', activeTab='life', sourceCouncilConnected=false, sourceCouncilPending=false, sourceCouncilHistory=[], sourceCouncilMode='procedural', modelTurnsThisDay=0, modelTurnsDay=-1, lastModelRequestAt=0;
 function rng(){state.seed=(Math.imul(1664525,state.seed)+1013904223)>>>0;return state.seed/4294967296}
 function pick(a){return a[Math.floor(rng()*a.length)]}
 function clamp(n,a=0,b=100){return Math.max(a,Math.min(b,n))}
@@ -74,5 +74,18 @@ function techTree(){let nodes=state.tech.nodes, depth=id=>{let n=TechReferee.get
 function pause(){clearInterval(timer);timer=null;render()}
 function play(){if(timer){pause();return}timer=setInterval(day,Math.max(110,1200/speed));render()}
 load();render();connectSourceCouncil();$('#play-btn').onclick=play;$('#step-btn').onclick=day;document.querySelectorAll('.speed').forEach(el=>el.onclick=()=>{speed=Number(el.dataset.speed);document.querySelectorAll('.speed').forEach(x=>x.classList.toggle('active',x===el));if(timer){clearInterval(timer);timer=setInterval(day,Math.max(110,1200/speed))}});$('#about-btn').onclick=about;$('#lineage-btn').onclick=lineage;$('#clans-btn').onclick=clanRecord;$('#council-btn').onclick=councilRecord;$('#overseer-btn').onclick=overseer;$('#tech-tree-btn').onclick=techTree;$('#filter-btn').onclick=()=>{let choices=['all','speech','discovery','birth','death','observation','observer','experiment','build','clan','exploration','overseer','world'];filter=choices[(choices.indexOf(filter)+1)%choices.length];renderFeed()};$('#export-btn').onclick=()=>{let blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`first-world-day-${String(state.day).padStart(3,'0')}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),30000)};$('#close-drawer').onclick=closeDrawer;$('#drawer-overlay').onclick=closeDrawer;$('#close-modal').onclick=()=>$('#modal-overlay').classList.add('hidden');$('#modal-overlay').onclick=e=>{if(e.target===$('#modal-overlay'))$('#modal-overlay').classList.add('hidden')};document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDrawer();$('#modal-overlay').classList.add('hidden')}});
-const localSpeak=speak;speak=function(a,text){localSpeak(a,text);if(window.AGENT_API_URL&&modelTurnsThisDay<6&&a.alive){modelTurnsThisDay++;fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:'You are '+a.name+' in a closed world with no outside knowledge. Reply in one brief natural sentence. Situation: '+text,max_output_tokens:80})}).then(r=>r.ok?r.json():null).then(d=>{let line=String(d&&d.text||'').trim();if(line&&line.length<280){event('speech',a.name,line);save();render()}}).catch(()=>{modelTurnsThisDay--})}};
+const localSpeak=speak;
+speak=function(a,text){
+  localSpeak(a,text);
+  if(modelTurnsDay!==state.day){modelTurnsDay=state.day;modelTurnsThisDay=0}
+  const now=Date.now();
+  if(!window.AGENT_API_URL||!a.alive||modelTurnsThisDay>=6||now-lastModelRequestAt<10000)return;
+  modelTurnsThisDay++;
+  lastModelRequestAt=now;
+  const context={day:state.day,weather:state.weather,food:a.food,water:a.water,nearby:peopleNear(a).map(b=>b.name),knowledge:a.knowledge.map(id=>TechReferee.get(state,id)?.name).filter(Boolean),situation:text};
+  fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:'You are '+a.name+' in a closed world. You know only what you have observed or learned from others. Speak one brief natural sentence to a nearby person based only on this context: '+JSON.stringify(context),max_output_tokens:200})})
+    .then(r=>{if(!r.ok)throw Error('Agent API returned '+r.status);return r.json()})
+    .then(d=>{let line=String(d&&d.text||'').trim();if(line&&line.length<280){event('speech',a.name,line);save();render()}})
+    .catch(error=>console.warn('Agent dialogue unavailable:',error.message));
+};
 })();

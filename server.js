@@ -22,7 +22,8 @@ async function agent(req, res) {
       const upstream = await fetch(API_URL, {method: 'POST', headers: {'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json'}, body: JSON.stringify({model: MODEL, input: input.prompt, max_output_tokens: Math.min(1000, Math.max(1, Number(input.max_output_tokens) || 300))})});
       const data = await upstream.json();
       if (!upstream.ok) return send(res, upstream.status, {error: data.error?.message || 'Model request failed'});
-      return send(res, 200, {text: data.output_text || data.choices?.[0]?.message?.content || ''});
+      const text = data.output_text || data.output?.flatMap(item => item.content || []).filter(part => part.type === 'output_text').map(part => part.text || '').join('') || data.choices?.[0]?.message?.content || '';
+      return send(res, 200, {text});
     } catch (error) { return send(res, 500, {error: error.message || 'Request failed'}); }
   });
 }
