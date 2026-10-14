@@ -18,7 +18,20 @@ const reviews=[
   ['Overseer boundary',(s,p)=>{if(p.kind!=='intervention')return skip();let c=p.command,qty=Number(c.quantity),duration=Number(c.duration);if(c.kind==='add')return String(c.name||'').trim()&&['food','water','wood','stone','fibre','hazard','mystery'].includes(c.category)&&Number.isInteger(qty)&&qty>=1&&qty<=30?yes('A bounded physical object can be introduced.'):no('The object needs a name, physical role, and quantity from 1 to 30.');if(c.kind==='remove')return ['food','water','wood','stone','fibre'].includes(c.category)&&['tile','world'].includes(c.scope)&&Number.isInteger(qty)&&qty>=1&&qty<=999?yes('A bounded physical resource can be removed.'):no('The removal amount, resource, or reach is invalid.');if(c.kind==='weather')return ['clear','rain','wind'].includes(c.weather)&&Number.isInteger(duration)&&duration>=1&&duration<=20?yes('Weather has a bounded duration.'):no('Weather or duration is invalid.');if(c.kind==='terrain')return yes('Terrain changes remain physical and observable.');return no('Direct changes to minds or unsupported world rules are forbidden.')}]
 ];
 function ensure(s){s.council ||= {decisions:[],approved:0,blocked:0};s.council.decisions ||= [];s.council.approved ||= 0;s.council.blocked ||= 0}
-function decide(s,p){ensure(s);const votes=reviews.map(([name,fn])=>({name,...fn(s,p)}));const approved=!votes.some(v=>v.vote==='block')&&votes.filter(v=>v.vote==='allow').length>=2;const result={day:s.day,kind:p.kind,label:p.label||p.kind,approved,votes};s.council.decisions.push(result);if(s.council.decisions.length>100)s.council.decisions.shift();s.council[approved?'approved':'blocked']++;return result}
+function reviewEdict(s,p){const q=p.plan||{},e=q.effect||{},target=s.agents.find(a=>a.id===e.targetId),validTile=Number.isInteger(q.tileIndex)&&!!s.tiles[q.tileIndex],quantity=Number.isInteger(Number(e.quantity))&&Number(e.quantity)>=1&&Number(e.quantity)<=99999;
+ const findings=[
+  [!['add','remove','person'].includes(e.kind)||quantity,'The proposed quantity can be represented in world state.','The quantity cannot be represented.'],
+  [validTile,'The intervention is anchored to a mapped place.','The selected place does not exist.'],
+  [Number.isInteger(s.day)&&s.day>=1,'The change can be placed on the current timeline.','The world has no valid current day.'],
+  [(e.kind!=='remove'||['food','water','wood','stone','fibre'].includes(e.category))&&(e.kind!=='terrain'||['grass','forest','berry','water','rock'].includes(e.terrain)),'Resources and terrain have map representations.','The material or terrain cannot be represented.'],
+  [e.kind!=='person'||!!target?.alive,'The affected person is living before the event.','The affected person is not living.'],
+  [!!q.perception,'Inhabitants can perceive a sensory trace without receiving the edict.','No sensory trace is available.'],
+  [e.kind!=='person'||!!target,'The named person can be found in this society.','The named person does not exist.'],
+  [e.kind!=='person'||!!target?.genes,'The person’s lineage record remains attached.','The person has no lineage record.'],
+  [['add','remove','terrain','weather','person'].includes(e.kind),'The effect has an executable world operation.','The effect has no executable operation.'],
+  [!!q.description,'The overseer instruction and its interpretation are recorded.','No overseer instruction was supplied.']
+ ];return reviews.map(([name],i)=>({name,...(findings[i][0]?yes(findings[i][1]):no(findings[i][2]))}))}
+function decide(s,p){ensure(s);const votes=p.kind==='edict'?reviewEdict(s,p):reviews.map(([name,fn])=>({name,...fn(s,p)}));const approved=!votes.some(v=>v.vote==='block')&&votes.filter(v=>v.vote==='allow').length>=2;const result={day:s.day,kind:p.kind,label:p.label||p.kind,approved,votes,interpretation:p.plan?.interpretation};s.council.decisions.push(result);if(s.council.decisions.length>100)s.council.decisions.shift();s.council[approved?'approved':'blocked']++;return result}
 root.Council={ensure,decide,reviewers:reviews.map(([name])=>name)};
 if(typeof module!=='undefined')module.exports=root.Council;
 })(typeof window!=='undefined'?window:globalThis);
