@@ -19,18 +19,29 @@ async function agent(req, res) {
     try {
       const input = JSON.parse(raw || '{}');
       if (typeof input.prompt !== 'string' || !input.prompt.trim()) return send(res, 400, {error: 'prompt is required'});
-      const upstream = await fetch(API_URL, {method: 'POST', headers: {'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json'}, body: JSON.stringify({model: MODEL, input: input.prompt, max_output_tokens: Math.min(1000, Math.max(1, Number(input.max_output_tokens) || 300))})});
+      const request = {
+        model: MODEL,
+        input: input.prompt,
+        max_output_tokens: Math.min(1000, Math.max(500, Number(input.max_output_tokens) || 500))
+      };
+      if (MODEL === 'gpt-5-nano') request.reasoning = {effort: 'minimal'};
+      const upstream = await fetch(API_URL, {method: 'POST', headers: {'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json'}, body: JSON.stringify(request)});
       const data = await upstream.json();
       if (!upstream.ok) return send(res, upstream.status, {error: data.error?.message || 'Model request failed'});
-      const text = data.output_text || data.output?.flatMap(item => item.content || []).filter(part => part.type === 'output_text').map(part => part.text || '').join('') || data.choices?.[0]?.message?.content || '';
-      return send(res, 200, {text});
+      const text = data.output_text || data.output?.flatMap(item => item.content || []).map(part => part.text || '').join('') || data.choices?.[0]?.message?.content || '';
+      if (!text.trim()) return send(res, 502, {
+        error: 'The model returned no dialogue.',
+        model_status: data.status || null,
+        reason: data.incomplete_details?.reason || null
+      });
+      return send(res, 200, {text: text.trim()});
     } catch (error) { return send(res, 500, {error: error.message || 'Request failed'}); }
   });
 }
 
 http.createServer((req, res) => {
   if (req.method === 'OPTIONS') return send(res, 204, {});
-  if (req.method === 'GET' && req.url === '/health') return send(res, 200, {ok: true, configured: Boolean(API_KEY && MODEL)});
+  if (req.method === 'GET' && req.url === '/health') return send(res, 200, {ok: true, configured: Boolean(API_KEY && MODEL), revision: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null});
   if (req.method === 'POST' && req.url === '/api/agent') return agent(req, res);
   return send(res, 404, {error: 'Not found'});
 }).listen(PORT, () => console.log(`Agent API listening on ${PORT}`));
