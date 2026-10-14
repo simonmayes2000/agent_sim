@@ -77,7 +77,7 @@
   function tryExperiment(a, state, candidate, rng) {
     const absent = missing(a, candidate);
     if (absent) return { status: 'missing', material: absent };
-    if (state.tiles[a.y * 8 + a.x].type !== candidate.site) return { status: 'site' };
+    if (state.tiles[a.y * state.width + a.x].type !== candidate.site) return { status: 'site' };
     const chance = Math.min(.82, .27 + a.genes.curiosity / 400 + a.genes.creativity / 500 + (candidate.parents.length ? .06 : 0));
     const success = rng() < chance;
     for (const [material, amount] of Object.entries(candidate.costs)) {
