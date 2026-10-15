@@ -2,7 +2,7 @@
 
 A browser-based agent survival simulator. Adam and Eve begin in a small world where they gather food and water, speak, experiment with materials, share discoveries, and may have descendants.
 
-The ten in-world rule referees use the same configured model API as the inhabitants. A consequential proposal first passes physical safeguards, then ten distinct model-role requests vote on it. Unanimous approval is required; an API failure blocks the proposal and is shown in the council record. This can make world steps slower and can use up to ten model calls per proposal. The separate source-code council below still requires a local service and only outputs patches for manual review.
+The ten in-world rule referees use the same configured model API as the inhabitants. A consequential proposal first passes physical safeguards, then the browser sends one request to the Render council endpoint, which gathers ten distinct model-role votes. Unanimous approval is required; an API failure blocks the proposal and is shown in the council record. This can make world steps slower and can use up to ten model calls per proposal. The separate source-code council below still requires a local service and only outputs patches for manual review.
 
 Play the private Site: https://the-first-world-simulator.creamdaisy32.chatgpt.site
 

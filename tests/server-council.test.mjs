@@ -1,0 +1,42 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import http from 'node:http';
+import {spawn} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import path from 'node:path';
+
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const listen=server=>new Promise(resolve=>server.listen(0,'127.0.0.1',()=>resolve(server.address().port)));
+
+test('one browser request collects ten separate model referee votes',async()=>{
+  let calls=0;
+  const upstream=http.createServer((req,res)=>{
+    let body='';req.on('data',part=>body+=part);req.on('end',()=>{
+      calls++;
+      const prompt=JSON.parse(body).input;
+      const approve=!prompt.includes('You are the Social referee');
+      res.writeHead(200,{'Content-Type':'application/json'});
+      res.end(JSON.stringify({output_text:JSON.stringify({approve,reason:approve?'Feasible':'Social concern'})}));
+    });
+  });
+  const upstreamPort=await listen(upstream);
+  const probe=http.createServer(),port=await listen(probe);await new Promise(resolve=>probe.close(resolve));
+  const child=spawn(process.execPath,['server.js'],{cwd:root,env:{...process.env,PORT:String(port),OPENAI_API_URL:`http://127.0.0.1:${upstreamPort}`,OPENAI_API_KEY:'test-key',AGENT_MODEL:'test-model'},stdio:'ignore'});
+  try{
+    let ready=false;
+    for(let i=0;i<30;i++){
+      try{const r=await fetch(`http://127.0.0.1:${port}/health`);if(r.ok){ready=true;break}}catch{}
+      await new Promise(resolve=>setTimeout(resolve,50));
+    }
+    assert.equal(ready,true,'proxy started');
+    const response=await fetch(`http://127.0.0.1:${port}/api/council`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({facts:{kind:'birth',day:3,people:[]}})});
+    assert.equal(response.status,200);
+    const data=await response.json();
+    assert.equal(calls,10);
+    assert.equal(data.votes.length,10);
+    assert.equal(data.votes.find(v=>v.name==='Social').approve,false);
+  }finally{
+    child.kill();
+    await new Promise(resolve=>upstream.close(resolve));
+  }
+});
