@@ -19,8 +19,8 @@ test('new exploration expands the map while preserving old locations and territo
   assert.ok(state.explored.includes(1*10+1));
 });
 
-test('mutual relationships create a visible clan and visited territory',()=>{
-  const {state,agents}=setup();const formed=world.updateClans(state);
+test('mutual relationships create a visible clan and visited territory',async()=>{
+  const {state,agents}=setup();const formed=await world.updateClans(state);
   assert.equal(formed.length,1);assert.equal(formed[0].members.length,3);
   world.markVisit(state,agents[0]);
   assert.equal(state.tiles[16].territory[formed[0].id],1);

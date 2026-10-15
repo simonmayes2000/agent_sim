@@ -33,14 +33,14 @@ function maybeExpand(state,rng){if(state.width>=16||state.explored.length<(state
   for(const m of state.interventions){if(m.x!=null){m.x++;m.y++}if(m.affected)m.affected=m.affected.map(i=>(Math.floor(i/oldW)+1)*W+(i%oldW)+1)}
   return {oldW,oldH,width:W,height:H};
 }
-function updateClans(state,approve=()=>true){const alive=state.agents.filter(a=>a.alive),visited=new Set(),groups=[];
+async function updateClans(state,approve=()=>true){const alive=state.agents.filter(a=>a.alive),visited=new Set(),groups=[];
   for(const a of alive){if(visited.has(a.id))continue;const group=[],queue=[a];visited.add(a.id);
     while(queue.length){const p=queue.shift();group.push(p);for(const b of alive)if(!visited.has(b.id)&&(p.likes[b.id]||0)>=65&&(b.likes[p.id]||0)>=65){visited.add(b.id);queue.push(b)}}
     if(group.length>=3)groups.push(group);
   }
   const claimed=new Set(),formed=[];
   for(const group of groups){let best=null,bestOverlap=0;for(const c of state.clans){if(claimed.has(c.id))continue;let overlap=group.filter(a=>a.clanId===c.id).length;if(overlap>bestOverlap){best=c;bestOverlap=overlap}}
-    if(!best){if(!approve(group))continue;let id=state.nextClanId++,t=state.tiles[group[0].y*state.width+group[0].x];let stem=t.type==='water'?'River':t.type==='forest'?'Canopy':t.type==='rock'?'Stone':t.type==='berry'?'Bramble':'Clearing';best={id,name:`${stem} Clan ${id}`,color:colors[(id-1)%colors.length],founded:state.day,members:[],x:group[0].x,y:group[0].y};state.clans.push(best);formed.push(best)}
+    if(!best){if(!await approve(group))continue;let id=state.nextClanId++,t=state.tiles[group[0].y*state.width+group[0].x];let stem=t.type==='water'?'River':t.type==='forest'?'Canopy':t.type==='rock'?'Stone':t.type==='berry'?'Bramble':'Clearing';best={id,name:`${stem} Clan ${id}`,color:colors[(id-1)%colors.length],founded:state.day,members:[],x:group[0].x,y:group[0].y};state.clans.push(best);formed.push(best)}
     claimed.add(best.id);best.members=group.map(a=>a.id);best.x=Math.round(group.reduce((n,a)=>n+a.x,0)/group.length);best.y=Math.round(group.reduce((n,a)=>n+a.y,0)/group.length);for(const a of group)a.clanId=best.id;
   }
   for(const a of alive)if(!groups.some(g=>g.includes(a)))a.clanId=null;

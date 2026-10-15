@@ -11,3 +11,17 @@ test('ten referees reach consensus on feasible birth and block lack of mutual af
 test('experiments need observed opportunity, supplies, and a suitable site',()=>{const s=fixture(),a=s.agents[0],c=Tech.possibilities(a,s).find(x=>x.effect==='edge');assert.equal(Council.decide(s,{kind:'experiment',actor:1,candidate:c}).approved,true);a.supplies.stone=0;assert.equal(Council.decide(s,{kind:'experiment',actor:1,candidate:c}).approved,false)});
 test('clans and tested object discoveries receive two relevant approvals',()=>{const s=fixture();assert.equal(Council.decide(s,{kind:'clan',members:[1,2,3]}).approved,true);assert.equal(Council.decide(s,{kind:'item-discovery',actor:1,itemId:4}).approved,true)});
 test('overseer cannot create minds or remove absent resources',()=>{const s=fixture();assert.equal(Council.decide(s,{kind:'intervention',command:{kind:'mind',tileIndex:0}}).approved,false);assert.equal(Council.decide(s,{kind:'intervention',command:{kind:'remove',category:'food',quantity:1,scope:'world',tileIndex:0}}).approved,false);assert.equal(Council.decide(s,{kind:'intervention',command:{kind:'add',tileIndex:0,name:'apple',category:'food',quantity:1}}).approved,true)});
+test('ten model referees must agree after physical checks pass',async()=>{
+ const s=fixture(),roles=[];
+ const decision=await Council.decideWithModels(s,{kind:'birth',parents:[1,2]},async role=>{roles.push(role);return {approve:true,reason:'Both people can provide for a child.'}});
+ assert.equal(roles.length,10);assert.equal(decision.approved,true);assert.equal(decision.mode,'model');
+ const veto=await Council.decideWithModels(s,{kind:'birth',parents:[1,2]},async role=>({approve:role!=='Social',reason:'Social review'}));
+ assert.equal(veto.approved,false);assert.equal(veto.votes.find(v=>v.name==='Social').vote,'block');
+ s.agents[1].likes[1]=20;let calls=0;
+ const safeguard=await Council.decideWithModels(s,{kind:'birth',parents:[1,2]},async()=>{calls++;return {approve:true}});
+ assert.equal(safeguard.approved,false);assert.equal(calls,0);
+});
+test('model failure cannot approve a world event',async()=>{
+ const s=fixture(),decision=await Council.decideWithModels(s,{kind:'birth',parents:[1,2]},async()=>{throw Error('offline')});
+ assert.equal(decision.approved,false);assert.equal(decision.votes.length,10);
+});

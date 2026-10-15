@@ -32,6 +32,25 @@ function reviewEdict(s,p){const q=p.plan||{},e=q.effect||{},target=s.agents.find
   [!!q.description,'The overseer instruction and its interpretation are recorded.','No overseer instruction was supplied.']
  ];return reviews.map(([name],i)=>({name,...(findings[i][0]?yes(findings[i][1]):no(findings[i][2]))}))}
 function decide(s,p){ensure(s);const votes=p.kind==='edict'?reviewEdict(s,p):reviews.map(([name,fn])=>({name,...fn(s,p)}));const approved=!votes.some(v=>v.vote==='block')&&votes.filter(v=>v.vote==='allow').length>=2;const result={day:s.day,kind:p.kind,label:p.label||p.kind,approved,votes,interpretation:p.plan?.interpretation};s.council.decisions.push(result);if(s.council.decisions.length>100)s.council.decisions.shift();s.council[approved?'approved':'blocked']++;return result}
-root.Council={ensure,decide,reviewers:reviews.map(([name])=>name)};
+async function decideWithModels(s,p,ask){
+  ensure(s);
+  const safeguards=p.kind==='edict'?reviewEdict(s,p):reviews.map(([name,fn])=>({name,...fn(s,p)}));
+  if(safeguards.some(v=>v.vote==='block')){const blocked=decide(s,p);blocked.mode='safeguard';return blocked}
+  const people=(p.kind==='birth'?p.parents:p.kind==='clan'?p.members:[p.actor]).filter(Boolean).map(id=>person(s,id)).filter(Boolean).map(a=>({name:a.name,age:a.age,alive:a.alive,health:a.health,food:a.food,water:a.water,place:[a.x,a.y],observed:a.observed,knowledge:a.knowledge,likes:a.likes,parents:a.parents}));
+  const facts={day:s.day,weather:s.weather,kind:p.kind,label:p.label,people,proposal:p.kind==='edict'?p.plan:p.candidate||p.node||{members:p.members,parents:p.parents},physicalChecks:safeguards.map(v=>({role:v.name,result:v.vote,reason:v.reason}))};
+  const votes=await Promise.all(reviews.map(async ([name])=>{
+    try{
+      const answer=await ask(name,facts);
+      if(answer?.approve!==true&&answer?.approve!==false)throw Error('No clear vote returned.');
+      return {name,vote:answer.approve?'allow':'block',reason:String(answer.reason||'No reason supplied.').slice(0,300),source:'model'};
+    }catch(error){return {name,vote:'block',reason:'Model unavailable: '+String(error.message||error).slice(0,200),source:'model'}}
+  }));
+  const approved=votes.every(v=>v.vote==='allow');
+  const result={day:s.day,kind:p.kind,label:p.label||p.kind,approved,votes,interpretation:p.plan?.interpretation,mode:'model'};
+  s.council.decisions.push(result);if(s.council.decisions.length>100)s.council.decisions.shift();
+  s.council[approved?'approved':'blocked']++;
+  return result;
+}
+root.Council={ensure,decide,decideWithModels,reviewers:reviews.map(([name])=>name)};
 if(typeof module!=='undefined')module.exports=root.Council;
 })(typeof window!=='undefined'?window:globalThis);
