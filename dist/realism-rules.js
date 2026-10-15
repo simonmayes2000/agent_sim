@@ -6,7 +6,7 @@ root.RealismRules={
   "birthMinFood": 5,
   "birthMinWater": 4,
   "birthBondMinimum": 68,
-  "shelterRequiresPhysicalSite": false
+  "shelterRequiresPhysicalSite": true
 };
 if(typeof module!=='undefined')module.exports=root.RealismRules;
 })(typeof window!=='undefined'?window:globalThis);
