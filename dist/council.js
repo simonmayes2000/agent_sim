@@ -37,7 +37,8 @@ async function decideWithModels(s,p,ask){
   const safeguards=p.kind==='edict'?reviewEdict(s,p):reviews.map(([name,fn])=>({name,...fn(s,p)}));
   if(safeguards.some(v=>v.vote==='block')){const blocked=decide(s,p);blocked.mode='safeguard';return blocked}
   const people=(p.kind==='birth'?p.parents:p.kind==='clan'?p.members:[p.actor]).filter(Boolean).map(id=>person(s,id)).filter(Boolean).map(a=>({name:a.name,age:a.age,alive:a.alive,health:a.health,food:a.food,water:a.water,place:[a.x,a.y],observed:a.observed,knowledge:a.knowledge,likes:a.likes,parents:a.parents}));
-  const facts={day:s.day,weather:s.weather,kind:p.kind,label:p.label,people,proposal:p.kind==='edict'?p.plan:p.candidate||p.node||{members:p.members,parents:p.parents},physicalChecks:safeguards.map(v=>({role:v.name,result:v.vote,reason:v.reason}))};
+  const trial=p.kind==='experiment'&&p.candidate?{action:'attempt an uncertain experiment',method:p.candidate.method,materials:p.candidate.materials,site:p.candidate.site,costs:p.candidate.costs,requiredPriorDiscoveries:p.candidate.parents}:null;
+  const facts={day:s.day,weather:s.weather,kind:p.kind,label:trial?`Attempt to ${trial.method} ${trial.materials.join(' and ')}`:p.label,people,proposal:trial|| (p.kind==='edict'?p.plan:p.node||{members:p.members,parents:p.parents}),physicalChecks:safeguards.map(v=>({role:v.name,result:v.vote,reason:v.reason}))};
   const votes=await Promise.all(reviews.map(async ([name])=>{
     try{
       const answer=await ask(name,facts);

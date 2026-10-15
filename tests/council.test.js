@@ -25,3 +25,14 @@ test('model failure cannot approve a world event',async()=>{
  const s=fixture(),decision=await Council.decideWithModels(s,{kind:'birth',parents:[1,2]},async()=>{throw Error('offline')});
  assert.equal(decision.approved,false);assert.equal(decision.votes.length,10);
 });
+test('model referees judge an experiment attempt without being told its result',async()=>{
+ const s=fixture(),a=s.agents[0];
+ a.observed.push('berry');s.tiles[0].type='berry';a.food=7;
+ const candidate=Tech.possibilities(a,s).find(x=>x.effect==='food');
+ let facts;
+ await Council.decideWithModels(s,{kind:'experiment',actor:1,candidate,label:'Adam tries Edible berries'},async(role,summary)=>{facts=summary;return {approve:true,reason:'The attempt is possible.'}});
+ assert.match(facts.label,/Attempt to taste berry/);
+ assert.equal(facts.proposal.action,'attempt an uncertain experiment');
+ assert.equal(facts.proposal.method,'taste');
+ assert.equal(JSON.stringify(facts).includes('Edible berries'),false);
+});
