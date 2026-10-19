@@ -7,8 +7,10 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {propose,review,unanimous,parseSource,amendSource} from './source-governance-core.mjs';
 import {runModelCouncil} from './model-source-council.mjs';
+import {createLocalAgentApi} from './local-agent-api.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),dist=path.join(root,'dist'),ruleFile=path.join(dist,'realism-rules.js'),auditFile=path.join(root,'work','source-council.jsonl');
 const args=process.argv.slice(2),port=Number(args[args.indexOf('--port')+1])||8000,push=args.includes('--push'),mode=args[args.indexOf('--agents')+1]==='codex'?'codex':'procedural';let lastReviewedDay=0;
+const localApi=createLocalAgentApi({root,mode});
 function git(...a){return spawnSync('git',a,{cwd:root,encoding:'utf8',timeout:30000})}
 function record(entry){fs.mkdirSync(path.dirname(auditFile),{recursive:true});fs.appendFileSync(auditFile,JSON.stringify(entry)+'\n')}
 function outcome(world){
@@ -25,6 +27,13 @@ async function reviewWorld(world){if(mode==='procedural')return outcome(world);i
 function json(res,code,value){res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value))}
 function recent(){try{return fs.readFileSync(auditFile,'utf8').trim().split('\n').slice(-20).filter(Boolean).map(JSON.parse).reverse().map(({day,at,status,reason,proposal,commit,votes,sourceFile,sourceChange,instructions})=>({day,at,status,reason,proposal:proposal&&{key:proposal.key,evidence:proposal.evidence,rationale:proposal.rationale,patch:proposal.patch},commit,votes,sourceFile,sourceChange,instructions}))}catch{return []}}
 function serve(req,res){let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://local').pathname)}catch{return json(res,400,{error:'Invalid path'})}
+ if(pathname==='/config.js'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'no-store'});return res.end('window.AGENT_API_URL="/api/agent";')}
+ if((pathname==='/api/agent'||pathname==='/api/council')&&req.method==='POST'){
+  const expected=`http://127.0.0.1:${port}`;
+  if(req.headers.origin&&req.headers.origin!==expected)return json(res,403,{error:'Only the local game may call local agents.'});
+  if(!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,415,{error:'A JSON request is required.'});
+  let bytes=0,body='';req.on('data',part=>{bytes+=part.length;if(bytes>30000)req.destroy();else body+=part});req.on('end',async()=>{try{json(res,200,await localApi(pathname.slice(5),JSON.parse(body)))}catch(error){json(res,503,{error:error.message||'Local agents are unavailable.'})}});return;
+ }
  if(pathname==='/__source-council/status'&&req.method==='GET')return json(res,200,{connected:true,mode,rules:parseSource(fs.readFileSync(ruleFile,'utf8')),history:recent()});
  if(pathname==='/__source-council/observe'&&req.method==='POST'){
   const expected=`http://127.0.0.1:${port}`;if(req.headers.origin&&req.headers.origin!==expected)return json(res,403,{error:'Only the local game may submit a world.'});

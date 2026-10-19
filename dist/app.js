@@ -19,7 +19,7 @@ async function refereeVotes(facts){
   if(!window.AGENT_API_URL)throw Error('Agent API is not connected.');
   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),180000);
   try{
-    const url=new URL(window.AGENT_API_URL);url.pathname=url.pathname.replace(/\/api\/agent$/,'/api/council');
+    const url=new URL(window.AGENT_API_URL,location.href);url.pathname=url.pathname.replace(/\/api\/agent$/,'/api/council');
     const response=await fetch(url.toString(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({facts}),signal:controller.signal});
     const data=await response.json();
     if(!response.ok)throw Error(data.error||'Agent API returned '+response.status);
