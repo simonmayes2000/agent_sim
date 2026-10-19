@@ -6,7 +6,7 @@ test('one aggregated development response covers ten remits without gameplay mut
  const state=world(),before=JSON.stringify(state);let calls=0,progress=0;
  const entry=await council.review(state,async prompt=>{
   calls++;assert.match(prompt,/GAME DEVELOPMENT/);assert.match(prompt,/not contain source code/);assert.match(prompt,/exactly one finding/);
-  return {status:'suggestion',findings:council.roles.map(role=>({role,status:'suggestion',evidence:'Adam has zero food and health 40.',change:'Evaluate earlier food seeking.',validation:'Compare deprivation over equal-seed runs.'})),consensus:{status:'suggestion',evidence:'Adam has zero food and health 40.',change:'Evaluate earlier food seeking.',validation:'Compare deprivation over equal-seed runs.'}};
+  return {status:'suggestion',findings:council.roles.map(role=>({role,status:'suggestion',evidence:'Adam has zero food and health 40.',change:'Evaluate earlier food seeking.',validation:'Compare deprivation over equal-seed runs.'})),consensus:{status:'suggestion',title:'Earlier food access',problem:'Hungry agents can lose health while food remains elsewhere.',evidence:'Adam has zero food and health 40.',change:'Evaluate earlier food seeking.',implementation:'Adjust the search decision and expose the route rationale in the observation feed.',validation:'Equal-seed runs show fewer deprivation days without changing resource totals.',priority:'high'}};
  },()=>progress++);
  assert.equal(calls,1);assert.equal(entry.status,'complete');assert.equal(entry.findings.length,10);assert.equal(entry.consensus.role,'Council consensus');assert.equal(progress,1);
  const {development,...game}=state;assert.equal(JSON.stringify(game),before);
