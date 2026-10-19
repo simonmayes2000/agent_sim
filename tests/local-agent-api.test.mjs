@@ -1,6 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import {createLocalAgentApi} from '../scripts/local-agent-api.mjs';
+import {findCodex} from '../scripts/model-source-council.mjs';
+
+test('Codex launcher finds a user-local install when PATH omits it',()=>{
+  const home=fs.mkdtempSync(path.join(os.tmpdir(),'codex-path-test-'));
+  try{
+    const bin=path.join(home,'.local','bin');fs.mkdirSync(bin,{recursive:true});
+    const executable=path.join(bin,process.platform==='win32'?'codex.cmd':'codex');
+    fs.writeFileSync(executable,'#!/bin/sh\n');fs.chmodSync(executable,0o755);
+    assert.equal(findCodex({HOME:home,PATH:''}),executable);
+  }finally{fs.rmSync(home,{recursive:true,force:true})}
+});
 
 test('local game uses Codex when the remote dialogue API cannot load',async()=>{
   let calls=0;
