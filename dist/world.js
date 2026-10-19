@@ -31,6 +31,7 @@ function maybeExpand(state,rng){if(state.width>=16||state.explored.length<(state
   for(const a of state.agents){a.x++;a.y++;a.seenTiles=(a.seenTiles||[]).map(i=>(Math.floor(i/oldW)+1)*W+(i%oldW)+1)}
   for(const c of state.clans){c.x++;c.y++}
   for(const m of state.interventions){if(m.x!=null){m.x++;m.y++}if(m.affected)m.affected=m.affected.map(i=>(Math.floor(i/oldW)+1)*W+(i%oldW)+1)}
+  root.Exploration?.remap(state,oldW,W);
   return {oldW,oldH,width:W,height:H};
 }
 async function updateClans(state,approve=()=>true){const alive=state.agents.filter(a=>a.alive),visited=new Set(),groups=[];
