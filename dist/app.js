@@ -31,7 +31,25 @@ function councilDecision(proposal){let batch;return Council.decideWithModels(sta
 function tile(x,y){return state.tiles[y*W+x]}
 function living(){return state.agents.filter(a=>a.alive)}
 function peopleNear(a){return living().filter(b=>b.id!==a.id&&Math.abs(a.x-b.x)+Math.abs(a.y-b.y)<=2)}
-function moveToward(a,test){let options=[];for(let y=0;y<H;y++)for(let x=0;x<W;x++){let t=tile(x,y);if(test(t)){let d=Math.abs(x-a.x)+Math.abs(y-a.y);options.push({x,y,d,t})}}options.sort((u,v)=>u.d-v.d||rng()-.5);if(!options.length)return false;let goal=options[0];if(goal.d===0)return true;if(goal.x!==a.x)a.x+=Math.sign(goal.x-a.x);else a.y+=Math.sign(goal.y-a.y);return false}
+function moveToward(a,test){
+  const start=a.y*W+a.x,seen=new Set(a.seenTiles||[]),queue=[start],previous=new Map([[start,null]]);
+  seen.add(start);
+  for(let i=0;i<queue.length;i++){
+    const pos=queue[i],x=pos%W,y=Math.floor(pos/W);
+    if(test(tile(x,y))){
+      if(pos===start)return true;
+      let step=pos;while(previous.get(step)!==start)step=previous.get(step);
+      a.x=step%W;a.y=Math.floor(step/W);return false;
+    }
+    for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const nx=x+dx,ny=y+dy,next=ny*W+nx;
+      if(nx>=0&&nx<W&&ny>=0&&ny<H&&seen.has(next)&&!previous.has(next)){
+        previous.set(next,pos);queue.push(next);
+      }
+    }
+  }
+  wander(a);return false;
+}
 function observe(a){let t=tile(a.x,a.y);let pos=a.y*W+a.x;if(!a.seenTiles.includes(pos))a.seenTiles.push(pos);if(a.lastVisited!==`${state.day}:${pos}`){WorldSystems.markVisit(state,a);a.lastVisited=`${state.day}:${pos}`}noticeChanges(a);noticeItems(a,t);if(!a.observed.includes(t.type)){a.observed.push(t.type);let nouns={forest:'trees and fallen branches',grass:'soft ground and scattered leaves',berry:'small red fruit',water:'moving water',rock:'loose hard stones'};event('observation',`${a.name} notices ${nouns[t.type]} for the first time.`)}a.lastAction='Observing the '+t.type}
 function speak(a,text){event('speech',a.name,text);for(let b of peopleNear(a)){if(a.id===b.id)continue;b.likes[a.id]=clamp((b.likes[a.id]??45)+3);a.likes[b.id]=clamp((a.likes[b.id]??45)+3);for(let k of a.knowledge)if(!b.knowledge.includes(k)){b.knowledge.push(k);let name=TechReferee.get(state,k)?.name||'a discovery';event('observation',`${b.name} learns about ${name.toLowerCase()} from ${a.name}.`)}for(let [id,meaning] of Object.entries(a.knownItems))if(meaning!=='untried'&&!b.knownItems[id])b.knownItems[id]=meaning}}
 function noticeChanges(a){for(const m of WorldSystems.relevantChanges(state,a).slice(0,2)){a.noticedInterventions.push(m.id);let line=m.perception|| (m.kind==='add'?'Something unfamiliar has appeared nearby. I should look carefully.':m.kind==='remove'?`There is less ${m.category} here than before. We may need to search farther.`:m.kind==='weather'?'The sky changed so quickly. We should adjust.':'This ground is different from what I remember.');if(m.perception)line+=' '+(a.food<3?'I need to find food.':a.water<3?'I need water soon.':m.kind==='add'?'I should approach carefully and learn what it is.':m.kind==='remove'?'We may need to search farther.':'I should watch what happens next.');speak(a,line)}}
