@@ -47,7 +47,7 @@ async function updateClans(state,approve=()=>true){const alive=state.agents.filt
   for(const c of state.clans)if(!claimed.has(c.id))c.members=[];
   return formed;
 }
-function build(state,a,node,prototype=false){const spec=builtEffects[node.effect];if(!spec)return null;let t=state.tiles[a.y*state.width+a.x];if(t.structures.some(s=>s.kind===spec[0]&&s.techId===node.id))return null;
+function build(state,a,node,prototype=false){const spec=builtEffects[node.effect];if(!spec)return null;let t=state.tiles[a.y*state.width+a.x];if(t.structures.some(s=>s.kind===spec[0]&&s.techId===node.id))return null;if(spec[0]==='shelter'&&t.type==='water')return null;
   if(!prototype){let cost=spec[0]==='hearth'?{wood:1,stone:1}:spec[0]==='knapping'?{stone:1}:{wood:1,fibre:1};for(const [k,v] of Object.entries(cost))if((a.supplies[k]||0)<v)return null;for(const [k,v] of Object.entries(cost))a.supplies[k]-=v}
   const structure={kind:spec[0],name:spec[1],icon:spec[2],techId:node.id,day:state.day,builder:a.name,clanId:a.clanId};t.structures.push(structure);return structure;
 }
