@@ -12,11 +12,12 @@ const builtEffects = {
   'prepared-food': ['drying','Food drying place','☼'], 'stored-food': ['drying','Drying rack','☼'],
   'safe-water': ['waterwork','Water warming place','≈'], 'water-store': ['cache','Water cache','▣']
 };
-function tile(type,i){return {type,food:type==='berry'?5:type==='forest'?2:0,water:type==='water'?12:0,wood:type==='forest'?8:0,stone:type==='rock'?8:0,fibre:type==='forest'?6:type==='grass'?4:0,i,visits:0,structures:[],items:[],territory:{}}}
+function foodCap(type){return type==='berry'?5:type==='forest'?3:0}
+function tile(type,i){return {type,food:type==='berry'?5:type==='forest'?2:0,foodRegenCap:foodCap(type),foodRegenCooldown:0,lastFoodHarvestDay:null,water:type==='water'?12:0,wood:type==='forest'?8:0,stone:type==='rock'?8:0,fibre:type==='forest'?6:type==='grass'?4:0,i,visits:0,structures:[],items:[],territory:{}}}
 function ensure(state){
   state.width ||= 8;state.height ||= 6;state.expansions ||= 0;if(!Array.isArray(state.explored))state.explored=[...new Set((state.agents||[]).flatMap(a=>a.seenTiles||[]))];state.lastExpansionExplored ||= 0;
   state.clans ||= [];state.nextClanId ||= 1;state.interventions ||= [];state.nextInterventionId ||= 1;state.nextItemId ||= 1;
-  for(const t of state.tiles){t.visits ||= 0;t.structures ||= [];t.items ||= [];t.territory ||= {}}
+  for(const t of state.tiles){t.visits ||= 0;t.structures ||= [];t.items ||= [];t.territory ||= {};t.foodRegenCap=foodCap(t.type);t.foodRegenCooldown=Math.max(0,Number(t.foodRegenCooldown)||0);t.lastFoodHarvestDay??=null}
   for(const a of state.agents){a.clanId ||= null;a.noticedInterventions ||= [];a.knownItems ||= {};}
   state.version=3;
 }
@@ -78,8 +79,10 @@ function enact(state,plan){let entry;if(plan.effect.scope==='world'&&['add','ter
  }else entry=intervene(state,plan.effect);
  entry.description=plan.description;entry.perception=plan.perception;entry.interpretation=plan.interpretation;entry.text=`${plan.description} → ${entry.text}`;return entry;
 }
-function take(state,t,category){const item=t.items.find(i=>i.category===category&&i.quantity>0);if(item){item.quantity--;if(!item.quantity)t.items=t.items.filter(i=>i.quantity>0);return item}if((t[category]||0)>0){t[category]--;return null}return false}
+function take(state,t,category){const item=t.items.find(i=>i.category===category&&i.quantity>0);if(item){item.quantity--;if(!item.quantity)t.items=t.items.filter(i=>i.quantity>0);return item}if((t[category]||0)>0){t[category]--;if(category==='food'&&foodCap(t.type)>0){t.foodRegenCap=foodCap(t.type);t.foodRegenCooldown=t.type==='berry'?2:1;t.lastFoodHarvestDay=state.day}return null}return false}
 function available(t,category){if(!t)return 0;return (t[category]||0)+(t.items||[]).filter(i=>i.category===category).reduce((n,i)=>n+i.quantity,0)}
-root.WorldSystems={tile,ensure,markVisit,maybeExpand,updateClans,build,intervene,enact,relevantChanges,take,available};
+function regrow(state,rng=Math.random){const changes=[];for(const t of state.tiles){const cap=foodCap(t.type);t.foodRegenCap=cap;if(cap){if(t.foodRegenCooldown>0)t.foodRegenCooldown--;else if(t.food<cap){t.food++;changes.push({tile:t.i,resource:'food',amount:t.food})}}if(t.type==='forest')t.wood=Math.min(8,t.wood+(rng()<.3?1:0));if(t.type==='water')t.water=Math.min(12,t.water+(rng()<.83?2:0));if(t.type==='grass'||t.type==='forest')t.fibre=Math.min(t.type==='forest'?6:4,t.fibre+(rng()<.36?1:0))}return changes}
+function regrowthStatus(t){const cap=foodCap(t?.type);if(!cap)return null;if(t.foodRegenCooldown>0)return {state:'cooldown',days:t.foodRegenCooldown,cap,current:t.food};if(t.food>=cap)return {state:'full',days:0,cap,current:t.food};return {state:'growing',days:cap-t.food,cap,current:t.food}}
+root.WorldSystems={tile,ensure,markVisit,maybeExpand,updateClans,build,intervene,enact,relevantChanges,take,available,regrow,regrowthStatus};
 if(typeof module!=='undefined')module.exports=root.WorldSystems;
 })(typeof window!=='undefined'?window:globalThis);

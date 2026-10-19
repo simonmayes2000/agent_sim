@@ -38,6 +38,18 @@ test('overseer additions and removals alter resources and remain perceptible',()
   assert.equal(added.itemId,item.id);
 });
 
+test('natural food pauses after harvest, then regrows locally to its terrain cap',()=>{
+  const {state}=setup(),berry=state.tiles[16];
+  berry.food=3;state.day=4;
+  world.take(state,berry,'food');
+  assert.deepEqual(world.regrowthStatus(berry),{state:'cooldown',days:2,cap:5,current:2});
+  world.regrow(state,()=>1);assert.equal(berry.food,2);assert.equal(berry.foodRegenCooldown,1);
+  world.regrow(state,()=>1);assert.equal(berry.food,2);assert.equal(berry.foodRegenCooldown,0);
+  world.regrow(state,()=>1);assert.equal(berry.food,3);
+  world.regrow(state,()=>1);world.regrow(state,()=>1);world.regrow(state,()=>1);
+  assert.equal(berry.food,5,'regrowth stops at the terrain cap');
+});
+
 test('a successful physical invention leaves a persistent map structure',()=>{
   const {state,agents}=setup();const node={id:'rub:wood+fibre',effect:'fire'};
   const hearth=world.build(state,agents[0],node,true);
