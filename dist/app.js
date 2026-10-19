@@ -174,7 +174,7 @@ async function reviewDevelopment(){
   await DevelopmentCouncil.review(world,async(prompt)=>{
    if(!window.AGENT_API_URL)throw Error('Agent API is not connected.');
    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),30000);
-   try{const response=await fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({prompt,max_output_tokens:1800,purpose:'development'})});const result=await response.json();if(!response.ok)throw Error(result.error||'Development review failed.');return result.text}finally{clearTimeout(timeout)}
+   try{const response=await fetch(window.AGENT_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},signal:controller.signal,body:JSON.stringify({prompt,max_output_tokens:1000,purpose:'development'})});const result=await response.json();if(!response.ok)throw Error(result.error||'Development review failed.');return result.text}finally{clearTimeout(timeout)}
   },()=>{if(state===world){save();render();if($('#development-record'))developmentRecord()}});
  }finally{developmentPending=false;if(state===world){save();render();if($('#development-record'))developmentRecord()}}
 }
