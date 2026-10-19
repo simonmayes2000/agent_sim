@@ -9,7 +9,7 @@ import {propose,review,unanimous,parseSource,amendSource} from './source-governa
 import {runModelCouncil} from './model-source-council.mjs';
 import {createLocalAgentApi} from './local-agent-api.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),dist=path.join(root,'dist'),ruleFile=path.join(dist,'realism-rules.js'),auditFile=path.join(root,'work','source-council.jsonl');
-const args=process.argv.slice(2),port=Number(args[args.indexOf('--port')+1])||8000,push=args.includes('--push'),mode=args[args.indexOf('--agents')+1]==='codex'?'codex':'procedural';let lastReviewedDay=0;
+const args=process.argv.slice(2),port=Number(args[args.indexOf('--port')+1])||8000,push=args.includes('--push'),mode=args[args.indexOf('--agents')+1]==='codex'?'codex':'procedural';let lastReviewedDay=0,server;
 const localApi=createLocalAgentApi({root,mode});
 function git(...a){return spawnSync('git',a,{cwd:root,encoding:'utf8',timeout:30000})}
 function record(entry){fs.mkdirSync(path.dirname(auditFile),{recursive:true});fs.appendFileSync(auditFile,JSON.stringify(entry)+'\n')}
@@ -27,6 +27,11 @@ async function reviewWorld(world){if(mode==='procedural')return outcome(world);i
 function json(res,code,value){res.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(value))}
 function recent(){try{return fs.readFileSync(auditFile,'utf8').trim().split('\n').slice(-20).filter(Boolean).map(JSON.parse).reverse().map(({day,at,status,reason,proposal,commit,votes,sourceFile,sourceChange,instructions})=>({day,at,status,reason,proposal:proposal&&{key:proposal.key,evidence:proposal.evidence,rationale:proposal.rationale,patch:proposal.patch},commit,votes,sourceFile,sourceChange,instructions}))}catch{return []}}
 function serve(req,res){let pathname;try{pathname=decodeURIComponent(new URL(req.url,'http://local').pathname)}catch{return json(res,400,{error:'Invalid path'})}
+ if(pathname==='/__source-council/restart'&&req.method==='POST'){
+  const expected=`http://127.0.0.1:${port}`;if(req.headers.origin&&req.headers.origin!==expected)return json(res,403,{error:'Only the local game may restart its server.'});
+  res.writeHead(202,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,restarting:true}));
+  server.close(()=>{const child=spawn(process.execPath,process.argv.slice(1),{cwd:root,detached:true,stdio:'ignore',env:process.env});child.unref();process.exit(0)});return;
+ }
  if(pathname==='/config.js'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'no-store'});return res.end('window.AGENT_API_URL="/api/agent";')}
  if((pathname==='/api/agent'||pathname==='/api/council')&&req.method==='POST'){
   const expected=`http://127.0.0.1:${port}`;
@@ -45,4 +50,4 @@ function serve(req,res){let pathname;try{pathname=decodeURIComponent(new URL(req
  try{const stat=fs.statSync(file);if(!stat.isFile())throw Error('Not a file');const types={'.html':'text/html','.js':'application/javascript','.css':'text/css','.json':'application/json'};res.writeHead(200,{'Content-Type':types[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});if(req.method==='HEAD')res.end();else fs.createReadStream(file).pipe(res)}catch{json(res,404,{error:'Not found'})}
 }
 if(args.includes('--once')){const file=args[args.indexOf('--once')+1];if(!file)throw Error('Pass an exported world JSON path after --once.');console.log(JSON.stringify(await reviewWorld(JSON.parse(fs.readFileSync(file,'utf8'))),null,2))}
-else http.createServer(serve).listen(port,'127.0.0.1',()=>console.log(`Source council game: http://127.0.0.1:${port}`));
+else {server=http.createServer(serve);server.listen(port,'127.0.0.1',()=>console.log(`Source council game: http://127.0.0.1:${port}`))}
