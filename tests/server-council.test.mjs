@@ -38,7 +38,7 @@ test('one browser request collects ten separate model referee votes',async()=>{
     const outcome=await fetch(`http://127.0.0.1:${port}/api/council`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({facts:{kind:'edict',mode:'open-world',day:3,proposal:{summary:'An unfamiliar morsel nourishes but causes discomfort.'}}})});
     assert.equal(outcome.status,200);assert.ok(requests.slice(-10).every(r=>r.input.includes('PROPOSED ACTUAL OUTCOME')));
     const author=await fetch(`http://127.0.0.1:${port}/api/agent`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({purpose:'world-resolution',prompt:'Author a compact open-world outcome.',max_output_tokens:5000})});
-    assert.equal(author.status,200);assert.equal(requests.at(-1).max_output_tokens,5000);
+    assert.equal(author.status,200);assert.equal(requests.at(-1).max_output_tokens,5000);assert.deepEqual(requests.at(-1).text,{format:{type:'json_object'}});
   }finally{
     child.kill();
     await new Promise(resolve=>upstream.close(resolve));

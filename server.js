@@ -66,6 +66,7 @@ async function agent(req, res) {
         input: input.prompt,
         max_output_tokens: Math.min(input.purpose==='world-resolution'?6000:1500, Math.max(500, Number(input.max_output_tokens) || 500))
       };
+      if(['world-intention','world-resolution'].includes(input.purpose))request.text={format:{type:'json_object'}};
       if (MODEL === 'gpt-5-nano') request.reasoning = {effort: 'minimal'};
       const upstream = await fetch(API_URL, {method: 'POST', headers: {'Authorization': `Bearer ${API_KEY}`, 'Content-Type': 'application/json'}, body: JSON.stringify(request)});
       const data = await upstream.json();
