@@ -1,4 +1,18 @@
 /* The map is the workspace. Panels expose detail without taking the world away. */
+/* Ground cells are hit targets, never a visible board or territory grid. */
+.atlas .living-map-card .world-map .terrain-cell,
+.atlas .living-map-card .world-map .terrain-cell:hover,
+.atlas .living-map-card .world-map .terrain-cell.selected,
+.atlas .living-map-card .world-map .terrain-cell.claimed,
+.atlas .living-map-card .world-map .terrain-cell.waypoint-route,
+.atlas .living-map-card .world-map .terrain-cell.unseen{border:0!important;outline:0!important;box-shadow:none!important;background:transparent!important;backdrop-filter:none;filter:none}
+.atlas .living-map-card .world-map .terrain-cell::before,
+.atlas .living-map-card .world-map .terrain-cell::after{display:none!important}
+.atlas .living-map-card .world-map .terrain-cell.selected::after,
+.atlas .living-map-card .world-map .terrain-cell:focus-visible::after{content:'';display:block!important;position:absolute;inset:auto;left:50%;top:50%;width:16px;height:16px;transform:translate(-50%,-50%);border:2px solid #f5edbc;border-radius:50%;background:#f5edbc22;box-shadow:0 0 0 5px #182b2540;opacity:1;pointer-events:none;z-index:15}
+.atlas .water-glint{display:none}
+.atlas .map-area.weather-rain .weather-layer{opacity:.18;background:radial-gradient(ellipse at 25% 20%,#dae4df55,transparent 65%),radial-gradient(ellipse at 75% 75%,#b9cbd533,transparent 70%);animation:none}
+.atlas .map-area.weather-wind .weather-layer{opacity:.12;background:radial-gradient(ellipse at 70% 25%,#e3e8cf44,transparent 70%);animation:none}
 .world-entity>i{clip-path:var(--entity-footprint,none)}
 .atlas .resource-grid[hidden]{display:none}
 .world-entity{--entity-color:#a9966e;--entity-size:30px;position:absolute;z-index:8;width:var(--entity-size);height:calc(var(--entity-size)*.8);padding:0;transform:translate(-50%,-50%) rotate(-12deg);border:0;cursor:pointer;background:transparent;filter:drop-shadow(4px 6px 3px #14271b66)}.world-entity>i{display:block;width:100%;height:100%;background:radial-gradient(ellipse at 30% 25%,color-mix(in srgb,var(--entity-color),#fff 30%),var(--entity-color) 45%,color-mix(in srgb,var(--entity-color),#14251b 40%));border-radius:38% 58% 44% 61%}.world-entity.entity-structure>i{border-radius:2px;background:linear-gradient(135deg,color-mix(in srgb,var(--entity-color),#fff 25%) 0 48%,var(--entity-color) 50%);border-bottom:6px solid color-mix(in srgb,var(--entity-color),#16281c 35%)}.world-entity>b{position:absolute;left:50%;top:calc(100% + 6px);transform:translateX(-50%) rotate(12deg);width:max-content;max-width:120px;padding:4px 6px;color:#f4f2dc;background:#14271bd9;border-radius:3px;font:8px 'DM Sans',sans-serif;font-weight:500;pointer-events:none}.map-far .world-entity>b,.map-area:not(.show-labels) .world-entity>b{display:none}.world-entity:hover{outline:2px solid #f3eab6;outline-offset:4px}.entity-new>i{animation:entity-appear 1.2s ease-out}@keyframes entity-appear{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:scale(1)}}@media(prefers-reduced-motion:reduce){.entity-new>i{animation:none}}
