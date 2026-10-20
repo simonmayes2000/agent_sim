@@ -10,6 +10,10 @@ The game opens directly into a full-window aerial map. Search for an inhabitant,
 
 The prioritised assessment, completed refactor and recommended next work are recorded in [World assessment and refactor](docs/world-refactor.md).
 
+Inhabitants now keep personal goals across days: exploring three new places, learning an experiment made possible by their observations, or constructing a known shelter. They gather the required materials and travel through known ground before attempting the work. Hunger, thirst and fatigue pause a project; satisfying those needs resumes it. Nearby companions still make time to talk and share. The Overview panel and each person's details show the project, actual materials, preparation progress, next step, attempts and recent completion. Goals and their last twelve outcomes persist with the saved world.
+
+Dialogue, visual direction and development advice run in separate background lanes. Each lane keeps one active job and the newest waiting day, so slow services do not build up an unlimited request queue or prevent the next day. Every day still records a compact evidence summary; the next development brief combines all those summaries with earlier recommendations. Reviews use snapshots and merge only their own results. New World aborts pending requests and invalidates old callbacks. Consequential event rulings, including experiments and construction, still require council approval before they change the world.
+
 ## Run locally
 
 For autonomous source governance, start the local council server from the repository:
@@ -49,7 +53,7 @@ Agent speech is shown by default, including scripted dialogue. Each completed da
 
 The **Development** button is the single source for game changes. After each world day, the ten specialist viewpoints combine every previous daily review with the current world into one cumulative, prioritized implementation brief: the problem, evidence, player experience, exact update, implementation guidance, priority, and acceptance check. The full history remains in the saved world, while only the latest cumulative brief is shown; individual referee suggestions and the separate source-council proposal archive are not shown as competing advice. The council evaluates recurring unresolved problems, discovery, meaningful choices, anticipation, relationship stakes, variety, pacing, readable feedback, and observer agency. No-evidence results and API failures remain visible. You can also request a review of the current day; completed days are not repeated, while partial reviews can be retried. Closing the Development window leaves it closed while a review finishes.
 
-Development reviews use one additional aggregated model call per world day. The ten roles deliberate inside that call and return only one compact council consensus, avoiding oversized or competing referee output. The call times out after 30 seconds; failures are recorded instead of silently omitted and a same-day retry replaces the failed result. These reviews provide advice and do not edit deployed code or grant knowledge to inhabitants. Browser changes still require a deployment to reach hosted visitors.
+Development reviews use one additional aggregated model call per reviewed snapshot; when playback outpaces the API, the next call covers the newest snapshot and all intervening daily evidence. The ten roles deliberate inside that call and return only one compact council consensus, avoiding oversized or competing referee output. The call times out after 30 seconds; failures are recorded instead of silently omitted and a same-day retry replaces the failed result. These reviews provide advice and do not edit deployed code or grant knowledge to inhabitants. Browser changes still require a deployment to reach hosted visitors.
 
 ## Shared exploration and resource waypoints
 

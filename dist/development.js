@@ -17,10 +17,11 @@ function ensure(state){state.development ||= {reviews:[]};state.development.revi
 function snapshot(state){
  const totals={};for(const t of state.tiles||[])for(const k of ['food','water','wood','stone','fibre'])totals[k]=(totals[k]||0)+(Number(t[k])||0)+(t.items||[]).filter(i=>i.category===k).reduce((n,i)=>n+(Number(i.quantity)||0),0);
  const history=ensure(state).reviews.filter(r=>r.day<state.day&&r.consensus).map(r=>({day:r.day,status:r.status,recommendation:r.consensus.status,title:r.consensus.title||'',problem:r.consensus.problem||'',evidence:r.consensus.evidence||'',change:r.consensus.change||'',validation:r.consensus.validation||''}));
+ const planningSystems=['Persistent agent goals with survival interruptions','Personal project materials, preparation, next steps and completion history','Nonblocking, cancellable advisory jobs; cumulative evidence recorded every day'];
  return {implementedSystems:['Individual routes through known ground','Resource sightings shared within distance 2','Dated public waypoint map and exploration log','Travel energy: 1 per tile, +1 on exposed windy ground','Observer hotspot route, decay-aware forecasts and recommended actions'],exploration:state.exploration?{waypoints:Object.values(state.exploration.waypoints||{}),recentLog:state.exploration.log?.slice(-20)}:null,day:state.day,weather:state.weather,width:state.width,height:state.height,explored:state.explored?.length,totals,
-  agents:(state.agents||[]).map(a=>({id:a.id,name:a.name,alive:a.alive,age:a.age,gen:a.gen,x:a.x,y:a.y,health:a.health,food:a.food,water:a.water,energy:a.energy,lastAction:a.lastAction,knownWaypointCount:Object.keys(a.exploration?.waypoints||{}).length,death:a.death,knowledge:a.knowledge,likes:a.likes})),
+  agents:(state.agents||[]).map(a=>({id:a.id,name:a.name,alive:a.alive,age:a.age,gen:a.gen,x:a.x,y:a.y,health:a.health,food:a.food,water:a.water,energy:a.energy,lastAction:a.lastAction,goal:a.goal,completedProjects:a.goalHistory,knownWaypointCount:Object.keys(a.exploration?.waypoints||{}).length,death:a.death,knowledge:a.knowledge,likes:a.likes})),
   sites:(state.tiles||[]).map((t,i)=>({i,type:t.type,food:t.food,water:t.water,structures:t.structures,items:t.items})),
-  discoveries:state.tech?.nodes?.slice(-15),events:state.events?.slice(-50),developmentHistory:history,
+  discoveries:state.tech?.nodes?.slice(-15),events:state.events?.slice(-50),developmentHistory:history,dailyEvidence:state.dayEvidence||[],planningSystems,
   priorSuggestions:history.filter(r=>r.recommendation==='suggestion').map(r=>({day:r.day,title:r.title,change:r.change})) };
 }
 function parse(answer){

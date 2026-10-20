@@ -22,10 +22,10 @@ Birth now gives the child the four food and two water deducted from the parents.
 
 ## Other areas assessed and next priorities
 
-1. **Agent agency:** decisions are still a fixed action hierarchy with random branches; model speech does not choose gameplay actions. A stronger language model alone will not improve planning. The next behavioural refactor should introduce persistent goals, interruptible plans and explicit reasons for switching goals, using the existing knowledge and route constraints.
-2. **Progression and enjoyment:** building, learning and relationships already exist, but compete with immediate survival. Improve persistent personal projects and visible milestones before adding more inventions. A project should show its required materials, next action and resulting physical change.
+1. **Agent agency (updated):** goals now persist across days, gather materials, follow known routes and resume after survival interruptions. Choices remain grounded in observed materials and personally known inventions. Model speech does not choose gameplay actions. The next step is richer cooperation and individual preferences within these plans.
+2. **Progression and enjoyment (updated):** personal project cards show materials, preparation, next actions, attempts and recent outcomes. Successful experiments and construction use existing physical world rules. Nearby agents retain regular opportunities to converse rather than spending every safe action on project work.
 3. **Simulation integrity:** ecology, movement, knowledge and conservation have useful test coverage. Remaining concerns include preservation sometimes skipping metabolic food consumption and generic speech sharing a whole knowledge inventory. These need isolated balance and knowledge-rule changes with regression scenarios.
-4. **Pacing:** conversation, visual direction and development reviews are awaited serially after simulation actions. Slow or unavailable APIs can hold a world step open. A subsequent lifecycle refactor should use world-versioned background review jobs, cancellation on New World and explicit progress, while consequential council decisions remain blocking.
+4. **Pacing (updated):** dialogue, visual direction and development advice now run in independent background lanes. Each lane coalesces waiting work to the newest snapshot; compact evidence summaries preserve every intervening day for the cumulative development brief. New World aborts requests and invalidates their callbacks. Review progress is visible, and closing Development leaves it closed. Consequential council decisions still block their proposed actions.
 5. **Development governance:** retain the single cumulative development brief. Individual event rulings belong in their audit record. Avoid adding another recommendations panel.
 6. **Persistence:** current browser saves preserve worlds, but save failures are swallowed and there is no import flow. Prioritise explicit save status, schema migrations, import validation and recovery before growing the save model.
 7. **Code structure:** the new renderer and workspace are isolated modules. The main app still combines simulation orchestration, API lifecycle and DOM rendering; separate these incrementally with behavioural tests rather than replacing the entire engine during a visual redesign.
@@ -34,3 +34,5 @@ Birth now gives the child the four food and two water deducted from the parents.
 ## Verification
 
 Run `node --test tests/*.test.js tests/*.test.mjs` for simulation, council, exploration, dialogue and API behaviour. Run `node tests/map-workspace.browser.cjs` for desktop/mobile map navigation, panels, search, selection, basemap switching and runtime errors.
+
+Run `node tests/agent-projects.browser.cjs` for intentionally delayed advisory requests, advancing days while reviews remain pending, reset isolation, cumulative daily evidence, and multi-day project completion producing discoveries and structures.
