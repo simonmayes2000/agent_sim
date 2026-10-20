@@ -54,3 +54,8 @@ test('visual referee plans preserve structured scene direction through local Cod
   assert.deepEqual(JSON.parse(result.text),direction);
   assert.equal(prompt,'Direct the satellite appearance.');
 });
+test('open-world intentions and outcome plans preserve arbitrary structured data locally',async()=>{
+ const answer={summary:'A small taste causes dizziness.',entities:[{op:'create',id:'unknown',name:'Folded matter',properties:{effect:'dizziness'}}]};
+ const handle=createLocalAgentApi({root:'/tmp/game',mode:'codex',remoteFetch:async()=>{throw Error('offline')},callAgent:async()=>answer});
+ for(const purpose of ['world-intention','world-resolution'])assert.deepEqual(JSON.parse((await handle('agent',{prompt:'Resolve an open-ended world.',purpose})).text),answer);
+});

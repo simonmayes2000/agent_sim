@@ -13,7 +13,7 @@
   let cachedKey='',cachedLand=null;
   function render(state,canvas,size,art,mode='satellite') {
     const width=state.width*size,height=state.height*size;
-    const key=JSON.stringify([state.width,state.height,state.day,state.weather,mode,art,state.tiles.map(t=>[t.type,t.food,t.wood,t.visits,t.structures.length])]);
+    const key=JSON.stringify([state.width,state.height,state.day,state.weather,mode,art,state.tiles.map(t=>[t.type,t.color,t.food,t.wood,t.visits,t.structures.length])]);
     canvas.width=width;canvas.height=height;canvas.style.width=width+'px';canvas.style.height=height+'px';
     const ctx=canvas.getContext('2d'); if(!ctx)return;
     if(cachedKey===key&&cachedLand){ctx.drawImage(cachedLand,0,0);return;}
@@ -27,7 +27,7 @@
       const ix=Math.floor(gx),iy=Math.floor(gy),fx=smooth(gx-ix),fy=smooth(gy-iy),mix=[0,0,0];
       for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++){
         const tx=Math.max(0,Math.min(state.width-1,ix+dx)),ty=Math.max(0,Math.min(state.height-1,iy+dy)),t=state.tiles[ty*state.width+tx];
-        const weight=(dx?fx:1-fx)*(dy?fy:1-fy),c=colors[t.type]||colors.grass;
+        const weight=(dx?fx:1-fx)*(dy?fy:1-fy),c=/^#[0-9a-f]{6}$/i.test(t.color||'')?rgb(t.color):colors[t.type]||colors.grass;
         for(let k=0;k<3;k++)mix[k]+=c[k]*weight;
       }
       const fine=noise(wx/12,wy/12),medium=noise(wx/46,wy/46),broad=noise(wx/260,wy/260);

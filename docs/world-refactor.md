@@ -1,5 +1,13 @@
 # World assessment and refactor
 
+## Open-world update
+
+The current player loop supersedes the fixed priorities described in the earlier assessment below. Agents now submit free-text intentions. A referee authors the actual outcome, and ten independent model roles review it before an atomic commit. New food, effects, discoveries, objects, structures, terrain, weather and persistent world processes no longer require a predefined recipe or resource name. Starting terrain has no stocked berries or automatic edible resource. Bodily upkeep and regrowth are referee-resolved rather than automatically applied by the old survival loop.
+
+The world stores arbitrary entity properties, individual learned properties, dated observations, conditions and described laws. Knowledge remains separate from hidden physical facts. Unknown resources can have benefits, harms or delayed consequences. The map renders novel entities and allows referee-directed extensions without an exploration threshold. The runtime enforces valid data and the renderer's supported extent; it does not execute generated code or claim unlimited rendering capabilities.
+
+The authoritative loop requires model calls. Visual and development advice remain background work. On failure or veto the proposed day is not applied. `tests/referee-world.browser.cjs` validates this path; older project scenarios explicitly select the retained legacy mode as compatibility regressions.
+
 The strongest part of the prototype is its premise: observe inhabitants discovering a shared world, see their decisions leave physical traces, and influence conditions without giving them outside knowledge. The weakest part was how difficult it was to see those relationships in the interface.
 
 ## Priority 1 — Make geography the primary interface (implemented)

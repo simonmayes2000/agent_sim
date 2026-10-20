@@ -36,7 +36,7 @@ const assert=require('node:assert/strict');
     });
     await page.goto(url);
     await page.evaluate(()=>{
-      const world=JSON.parse(localStorage.getItem('first-world-v1'));world.modelIntroDone=true;world.seed=42;
+      const world=JSON.parse(localStorage.getItem('first-world-v1'));world.modelIntroDone=true;world.seed=42;world.openWorld={enabled:false,entities:[],laws:[],history:[]};world.tiles.forEach(t=>{t.food=5;t.water=12;t.wood=8;t.fibre=6;t.stone=8;});world.tiles[0].type='forest';world.tiles[6].type='forest';
       world.agents.forEach((a,i)=>{a.x=i===0?0:6;a.y=0;a.seenTiles=[a.x];a.observed=['forest'];a.food=12;a.water=12;a.energy=90;});
       localStorage.setItem('first-world-v1',JSON.stringify(world));
     });
@@ -60,7 +60,7 @@ const assert=require('node:assert/strict');
     assert.equal(await page.locator('#modal-overlay').evaluate(e=>e.classList.contains('hidden')),true);
     // Isolated, well-provisioned agents pursue observed-material experiments over multiple days.
     await page.evaluate(()=>{
-      const world=JSON.parse(localStorage.getItem('first-world-v1'));world.modelIntroDone=true;world.seed=42;
+      const world=JSON.parse(localStorage.getItem('first-world-v1'));world.modelIntroDone=true;world.seed=42;world.openWorld={enabled:false,entities:[],laws:[],history:[]};world.tiles.forEach(t=>{t.food=5;t.water=12;t.wood=8;t.fibre=6;t.stone=8;});world.tiles[0].type='forest';world.tiles[6].type='forest';
       world.agents.forEach((a,i)=>{a.x=i===0?0:6;a.y=0;a.seenTiles=[a.x];a.observed=['forest'];a.food=20;a.water=20;a.energy=90;});
       localStorage.setItem('first-world-v1',JSON.stringify(world));
     });

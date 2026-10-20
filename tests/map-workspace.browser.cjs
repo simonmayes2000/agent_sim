@@ -26,7 +26,7 @@ const assert=require('node:assert/strict');
     await page.waitForSelector('#terrain-canvas');
     await page.evaluate(()=>{
       const key='first-world-v1',world=JSON.parse(localStorage.getItem(key));
-      world.explored=world.tiles.map((_,i)=>i);
+      world.openWorld={enabled:false,entities:[],laws:[],history:[]};world.tiles[16].food=5;world.tiles[17].water=12;world.explored=world.tiles.map((_,i)=>i);world.exploration.waypoints={'16:food':{tile:16,resource:'food',amount:5,day:1,observer:1,revision:1}};world.agents[0].exploration.waypoints=JSON.parse(JSON.stringify(world.exploration.waypoints));
       world.day=18;
       world.tiles.forEach((tile,i)=>tile.visits=i%3===0?12:i%2===0?5:2);
       world.tiles[16].structures=[
