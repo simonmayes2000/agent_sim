@@ -13,7 +13,7 @@ export function createLocalAgentApi({root,mode,remoteUrl=process.env.REMOTE_AGEN
     return data;
   }
   async function localAgent(input){
-    if(input.purpose==='development'){
+    if(input.purpose==='development'||input.purpose==='visual'){
       const answer=await callAgent(input.prompt,root,180000);
       return {text:JSON.stringify(answer)};
     }

@@ -45,3 +45,12 @@ test('development reviews preserve structured advice through local Codex fallbac
   assert.deepEqual(JSON.parse(result.text),advice);
   assert.equal(prompt,'Review game development as the Space referee.');
 });
+
+test('visual referee plans preserve structured scene direction through local Codex fallback',async()=>{
+  const direction={title:'Rain-darkened settlement',palette:{ground:'#445544'},regions:[],marks:[]};
+  let prompt;
+  const handle=createLocalAgentApi({root:'/tmp/game',mode:'codex',remoteFetch:async()=>{throw Error('network unavailable')},callAgent:async value=>{prompt=value;return direction}});
+  const result=await handle('agent',{prompt:'Direct the satellite appearance.',purpose:'visual'});
+  assert.deepEqual(JSON.parse(result.text),direction);
+  assert.equal(prompt,'Direct the satellite appearance.');
+});
