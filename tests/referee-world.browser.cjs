@@ -38,7 +38,7 @@ const assert=require('node:assert/strict');
       if(body.purpose==='world-resolution'&&recoverDayTwo&&resolutions===2){
         if(!body.repair)response.text='{"summary":"A small taste","discoveries":[';
         else{
-          repairReplies++;const outcome=JSON.parse(response.text);outcome.entities[0]={op:'remove',id:'folded-growth'};
+          repairReplies++;const outcome=JSON.parse(response.text);outcome.entities[0]={op:'remove',id:'Pale folded growth'};outcome.entities[1].op='update';
           outcome.discoveries[0].entityIds=[repairReplies===1?'nonexistent-proof':'Pale folded growth'];response.text=JSON.stringify(outcome);
         }
       }
@@ -55,8 +55,11 @@ const assert=require('node:assert/strict');
     assert.equal(await page.locator('[data-entity="folded-growth"]').count(),1);assert.match(await page.locator('#atlas-weather').innerText(),/thin silver mist/);
     await page.click('[data-panel="resources"]');assert.match(await page.locator('#hotspot-list').innerText(),/Pale folded growth/);assert.doesNotMatch(await page.locator('#hotspot-list').innerText(),/cramps/);
     await page.click('[data-panel="stories"]');
+    // Reproduce reopening a saved world held on day two by the reported error.
+    await page.evaluate(()=>{const saved=JSON.parse(localStorage.getItem('first-world-v1'));saved.openWorld.lastError='The model response could not be repaired after 3 attempts: Cannot change an entity that does not exist.';saved.openWorld.status='unavailable';localStorage.setItem('first-world-v1',JSON.stringify(saved));});
+    await page.reload();assert.equal(await page.locator('#step-btn').innerText(),'RETRY DAY');
     recoverDayTwo=true;await page.click('#step-btn');await page.waitForFunction(()=>document.querySelector('#day-count').textContent==='03'&&!document.querySelector('#step-btn').disabled);
-    world=await read();assert.equal(repairReplies,2);assert.deepEqual(world.tech.nodes[0].entityIds,['folded-growth']);assert.equal(world.agents[0].food,9);assert.equal(world.agents[0].health,85);assert.equal(world.agents[0].worldStates[0].name,'stomach discomfort');assert.deepEqual(world.agents[0].knowledge,['folded-effect']);
+    world=await read();assert.equal(repairReplies,2);assert.deepEqual(world.tech.nodes[0].entityIds,['folded-growth']);assert.ok(world.openWorld.history.at(-1).changes.referenceCorrections.length>=2);assert.equal(world.agents[0].food,9);assert.equal(world.agents[0].health,85);assert.equal(world.agents[0].worldStates[0].name,'stomach discomfort');assert.deepEqual(world.agents[0].knowledge,['folded-effect']);
     assert.equal(await page.locator('.entity-structure').count(),1);assert.equal(world.council.decisions.at(-1).votes.length,10);
     const before=JSON.stringify({agents:world.agents,entities:world.openWorld.entities,day:world.day});
     veto=true;await page.click('#step-btn');await page.waitForFunction(()=>!document.querySelector('#step-btn').disabled&&document.querySelector('#world-status').textContent.includes('OUTCOME HELD'));

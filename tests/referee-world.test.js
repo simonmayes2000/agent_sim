@@ -73,3 +73,29 @@ test('failed repairs are bounded and network failures are not treated as malform
  let calls=0;await assert.rejects(World.requestValidated(async()=>{calls++;return '{bad';},'Return JSON',raw=>World.validate(raw,fixture())),/after 3 attempts/);assert.equal(calls,3);
  calls=0;await assert.rejects(World.requestValidated(async()=>{calls++;throw Error('Service offline');},'Return JSON',raw=>World.validate(raw,fixture())),/Service offline/);assert.equal(calls,1);
 });
+test('saved day two outcomes resolve names and case variants before council and application',()=>{
+ const state=fixture();state.day=2;state.openWorld.lastError='Cannot change an entity that does not exist.';
+ state.openWorld.entities=[{id:'growth-17',name:'Pale folded growth',description:'A folded patch',tile:0,quantity:3,knownBy:[1]}];
+ const proposal=World.validate({summary:'One portion is examined.',entities:[{op:'update',id:'PALE FOLDED GROWTH',quantity:2}]},state);
+ assert.equal(proposal.entities[0].id,'growth-17');assert.equal(proposal.referenceCorrections.length,1);
+ const next=World.apply(state,proposal);assert.equal(next.day,3);assert.equal(next.openWorld.lastError,null);assert.equal(next.openWorld.entities[0].quantity,2);assert.equal(state.openWorld.entities[0].quantity,3);
+ const removed=World.apply(next,{summary:'The patch is removed.',entities:[{op:'remove',id:'GROWTH-17'}]});assert.equal(removed.openWorld.entities.length,0);
+});
+test('fully specified first encounters mislabeled update become explicit council-reviewable creations',()=>{
+ const state=fixture(),p=World.validate({summary:'A new material is noticed.',entities:[{op:'update',id:'unfamiliar',name:'Loose curls',description:'Thin curls on the ground',tile:0,quantity:2,knownBy:[1]}],discoveries:[{id:'curls',name:'Surface curls',detail:'The ground bears loose curls.',learners:[1],entityIds:['Loose curls']}]},state);
+ assert.equal(p.entities[0].op,'create');assert.match(p.referenceCorrections[0].reason,/NEW creation/);assert.equal(World.apply(state,p).openWorld.entities[0].id,'unfamiliar');
+ assert.deepEqual(p.discoveries[0].entityIds,['unfamiliar']);
+});
+test('explicit create can follow its update in output without losing the update',()=>{
+ const next=World.apply(fixture(),{summary:'A loose object is found and moved.',entities:[{op:'update',id:'Loose curl',tile:1},{op:'create',id:'curl',name:'Loose curl',description:'A curled fragment',tile:0}]});
+ assert.equal(next.openWorld.entities[0].tile,1);assert.deepEqual(next.openWorld.history[0].changes.entities.map(e=>e.op),['create','update']);
+});
+test('missing, ambiguous and already removed objects cannot grant unsupported changes',()=>{
+ const state=fixture();state.openWorld.entities=[{id:'a',name:'Fragment',tile:0},{id:'b',name:'Fragment',tile:1}];
+ const before=JSON.stringify(state);
+ for(const operation of [{op:'update',id:'missing',quantity:4},{op:'update',id:'Fragment',quantity:4},{op:'remove',id:'never-existed'}])assert.throws(()=>World.apply(state,{summary:'Unsupported',entities:[operation],agents:[{id:1,delta:{food:3}}]}),/Current mutable IDs.*"a".*"b"/);
+ assert.throws(()=>World.apply(state,{summary:'Double removal',entities:[{op:'remove',id:'a'},{op:'remove',id:'a'}]}),/already removed/);
+ state.openWorld.history=[{changes:{entities:[{op:'create',id:'gone',name:'Old fragment'}]}}];
+ assert.throws(()=>World.validate({summary:'Resurrection',entities:[{op:'update',id:'gone',name:'Old fragment',description:'Previously consumed',tile:0}]},state),/not a current object/);
+ state.openWorld.history=[];assert.equal(JSON.stringify(state),before);
+});

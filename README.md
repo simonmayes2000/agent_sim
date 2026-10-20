@@ -23,6 +23,8 @@ World entities have arbitrary names, descriptions, properties, quantities, locat
 
 The runtime checks references, coordinates, finite quantities and structured changes. It does not execute generated code. The current map renderer supports up to 24 by 24 cells; referees can extend any edge without an exploration-percentage unlock. These are representation limits, rather than a list of permissible foods, actions or technologies. A novel phenomenon can be represented through entities, properties, states, terrain and persistent laws; a wholly new execution or rendering capability would still require engine work.
 
+Entity changes resolve unique object names and case-insensitive IDs to their stable IDs. Explicit creations run before changes that reference them. A fully described first encounter accidentally labeled `update` is proposed as `create`, with the correction included in the council's reviewed outcome. This does not resurrect historical objects or accept incomplete missing-object changes. Unresolved targets produce repair instructions containing the offending reference and current object registry, including guidance to resolve a failed attempt instead of consuming a nonexistent resource. Saved worlds held on this error can use Retry Day after refreshing; no reset is required.
+
 Personal plans persist with their next steps and referee-assessed progress. Completed and abandoned goals remain in each person's recent project history. The Overview and person drawer display these records. What agents choose and what actually happens are separate facts.
 
 ## Explore and observe
