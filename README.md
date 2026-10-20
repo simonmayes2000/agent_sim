@@ -6,6 +6,10 @@ The ten in-world rule referees use the same configured model API as the inhabita
 
 Play the private Site: https://the-first-world-simulator.creamdaisy32.chatgpt.site
 
+The game opens directly into a full-window aerial map. Search for an inhabitant, a named building or explored coordinates (for example `2, 3`), then use the Overview, People, Resources and Chronicle tabs to inspect the world. Drag to pan, scroll or double-click to zoom, and use Fit to return to the whole world. Satellite and Terrain views share the same simulated geography; the layer control exposes resource and activity overlays. Space toggles playback and F fits the map. The side panel collapses, and becomes a bottom sheet on phones.
+
+The prioritised assessment, completed refactor and recommended next work are recorded in [World assessment and refactor](docs/world-refactor.md).
+
 ## Run locally
 
 For autonomous source governance, start the local council server from the repository:

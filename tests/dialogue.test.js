@@ -16,7 +16,7 @@ function setup(agents, nearby) {
   return {context,calls,button};
 }
 test('daily conversation includes a nearby reply and current-day context',async()=>{
-  const a={name:'Adam',lastAction:'Drinking'},b={name:'Eve',lastAction:'Exploring'};
+  const a={id:1,name:'Adam',alive:true,lastAction:'Drinking'},b={id:2,name:'Eve',alive:true,lastAction:'Exploring'};
   const {context,calls,button}=setup([a,b],person=>person===a?[b]:[a]);
   await context.agentConversation();
   assert.deepEqual(calls.map(c=>c.name),['Adam','Eve']);
@@ -36,6 +36,14 @@ test('an empty world makes no model request',async()=>{
   const {context,calls}=setup([],()=>[]);
   await context.agentConversation();
   assert.equal(calls.length,0);
+});
+test('a reply is skipped when the listener moves away during the opening request',async()=>{
+  const a={id:1,name:'Adam',alive:true,lastAction:'Drinking'},b={id:2,name:'Eve',alive:true};
+  let nearby=true;
+  const {context,calls}=setup([a,b],person=>nearby?(person===a?[b]:[a]):[]);
+  context.requestModelVoice=async person=>{calls.push({name:person.name});nearby=false;return 'I see trees.';};
+  await context.agentConversation();
+  assert.deepEqual(calls.map(c=>c.name),['Adam']);
 });
 test('an ongoing exchange prevents duplicate conversations',async()=>{
   const a={name:'Adam',lastAction:'Drinking'},b={name:'Eve'};
