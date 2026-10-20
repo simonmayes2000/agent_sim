@@ -17,14 +17,14 @@ test('aggregated model failures are visible, never represented as successful rev
  assert.equal(entry.status,'partial');assert.equal(entry.findings.length,0);
  assert.equal(entry.consensus.status,'unavailable');
 });
-test('snapshots include introduced resources and past suggestions without full review history',()=>{
- const state=world();state.development={reviews:[{consensus:{status:'suggestion',title:'Cooperate',change:'Improve cooperation.'}}]};
- const snapshot=council.snapshot(state);assert.equal(snapshot.totals.food,5);assert.equal(snapshot.priorSuggestions[0].change,'Improve cooperation.');assert.deepEqual(snapshot.implementedSystems.length,5);
+test('snapshots include introduced resources and the complete prior development history',()=>{
+ const state=world();state.development={reviews:[1,2,3,4].map(day=>({day,status:'complete',consensus:{status:'suggestion',title:'Idea '+day,problem:'Problem '+day,evidence:'Evidence '+day,change:'Change '+day,validation:'Check '+day}}))};
+ const snapshot=council.snapshot(state);assert.equal(snapshot.totals.food,5);assert.equal(snapshot.developmentHistory.length,4);assert.equal(snapshot.developmentHistory[0].change,'Change 1');assert.equal(snapshot.priorSuggestions[3].change,'Change 4');assert.deepEqual(snapshot.implementedSystems.length,5);
 });
-test('development history stays bounded and advances with world days',async()=>{
+test('development history retains every previous day and advances with world days',async()=>{
  const state=world();state.development={reviews:Array.from({length:20},(_,day)=>({day:day-20,status:'complete',findings:[]}))};
  await council.review(state,async()=>({status:'no-evidence',evidence:'Insufficient evidence.'}));
- assert.equal(state.development.reviews.length,20);assert.equal(state.development.reviews.at(-1).day,5);
+ assert.equal(state.development.reviews.length,21);assert.equal(state.development.reviews.at(-1).day,5);
  state.day++;await council.review(state,async()=>({status:'no-evidence',evidence:'Insufficient evidence.'}));
- assert.equal(state.development.reviews.at(-1).day,6);
+ assert.equal(state.development.reviews.length,22);assert.equal(state.development.reviews.at(-1).day,6);
 });

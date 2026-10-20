@@ -31,6 +31,15 @@ test('same-day depletion and later regrowth refresh sightings only when observed
  assert.equal(s.exploration.waypoints['5:food'].day,2);
  b.x=1;b.y=1;exploration.share(s,a,b);assert.equal(b.exploration.waypoints['5:food'].amount,3);
 });
+test('sighting forecasts expose freshness, trends, weather and the best next target',()=>{
+ const s=setup(),a=s.agents[0];s.tiles[5].food=5;exploration.observe(s,a);
+ assert.equal(a.exploration.waypoints['5:food'].expiresDay,4);
+ s.day=2;s.tiles[5].food=3;exploration.observe(s,a);s.day=3;
+ const forecast=exploration.forecast(s,a,s.exploration.waypoints['5:food']);
+ assert.equal(forecast.status,'reachable');assert.equal(forecast.projectedAmount,1);assert.equal(forecast.remainingDays,1);assert.equal(forecast.staleIn,2);assert.match(forecast.weatherImpact,/no travel penalty/i);assert.match(forecast.recommendation,/travel now/i);
+ const best=exploration.bestResourceRoute(s,a,'food');assert.equal(best.target,5);assert.equal(best.projectedAmount,1);
+ s.day=6;const stale=exploration.forecast(s,a,s.exploration.waypoints['5:food']);assert.ok(stale.staleIn<0);assert.match(stale.recommendation,/recheck|verify/i);
+});
 test('sharing a connected explored corridor makes its resource destination routable',()=>{
  const s=setup(),[a,b]=s.agents;b.x=0;b.y=0;
  for(const x of [0,1,2,3]){a.x=x;s.tiles[8].water=8;exploration.observe(s,a)}
