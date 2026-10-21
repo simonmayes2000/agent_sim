@@ -11,5 +11,5 @@ const outcome={type:'object',additionalProperties:true,required:['summary'],prop
 }};
 const speech={type:'object',additionalProperties:false,required:['text'],properties:{text:{type:'string'}}};
 const vote={type:'object',additionalProperties:false,required:['approve','reason'],properties:{approve:{type:'boolean'},reason:{type:'string'}}};
-function format(purpose){const schema=purpose==='world-intention'?intention:purpose==='world-resolution'?outcome:purpose==='council'?vote:purpose==='speech'?speech:null;return schema?{format:{type:'json_schema',name:purpose.replaceAll('-','_'),strict:['council','speech'].includes(purpose),schema}}:null;}
+function format(purpose,view){let schema=purpose==='world-intention'?intention:purpose==='world-resolution'?outcome:purpose==='council'?vote:purpose==='speech'?speech:null;if(purpose==='world-intention'&&view){schema=JSON.parse(JSON.stringify(schema));const ids=view.entities.map(e=>e.id);schema.properties.targetEntityIds=ids.length?{type:'array',maxItems:100,items:{type:'string',enum:ids}}:{type:'array',maxItems:0,items:{type:'string'}};}return schema?{format:{type:'json_schema',name:purpose.replaceAll('-','_'),strict:['council','speech'].includes(purpose),schema}}:null;}
 module.exports={format};

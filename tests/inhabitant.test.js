@@ -50,3 +50,23 @@ test('context is detached data and bounded instead of exposing executable object
 test('referee output preserves incomplete-provider metadata even when no text was produced',async()=>{
  const result=await runtime(()=>({status:'incomplete',incomplete_details:{reason:'max_output_tokens'},output_text:''})).referee({purpose:'world-resolution',prompt:'Resolve a complete day.'});assert.equal(result.model_status,'incomplete');assert.equal(result.incomplete_reason,'max_output_tokens');assert.equal(result.text,'');
 });
+
+test('day-one target IDs are constrained to an empty array, with bounded correction against the same view',async()=>{
+ const req=request();req.view.day=1;req.view.entities=[];req.view.experiences=[];const calls=[];let n=0;
+ const r=await runtime(()=>({output_text:JSON.stringify({action:'Inspect the forest ground',targetEntityIds:n++===0?['forest']:[]})}),calls).inhabitant(req);
+ assert.deepEqual(r.intention.targetEntityIds,[]);assert.equal(calls.length,2);assert.equal(calls[0].body.text.format.schema.properties.targetEntityIds.maxItems,0);assert.deepEqual(JSON.parse(calls[0].body.input),JSON.parse(calls[1].body.input));assert.match(calls[1].body.instructions,/UNKNOWN_OBJECT_TARGET/);assert.match(calls[1].body.instructions,/SAME personal view/);assert.equal(r.inferenceDiagnostics[0].code,'UNKNOWN_OBJECT_TARGET');assert.match(r.inferenceDiagnostics[0].responseText,/forest/);assert.ok(calls.every(c=>c.body.tools.length===0&&c.body.tool_choice==='none'));
+ assert.deepEqual(Inhabitant.response(req,r).intention.targetEntityIds,[]);
+});
+test('known object targets are enumerated without exposing unknown world objects',async()=>{
+ const calls=[];await runtime(attempt,calls).inhabitant(request());assert.deepEqual(calls[0].body.text.format.schema.properties.targetEntityIds.items.enum,['seen']);
+});
+test('repeated invalid targets fail after three attempts with rejected-output diagnostics and no invented target',async()=>{
+ const calls=[];await assert.rejects(runtime({...attempt,targetEntityIds:['not-observed']},calls).inhabitant(request()),error=>{assert.equal(error.code,'UNKNOWN_OBJECT_TARGET');assert.equal(error.inferenceDiagnostics.length,3);assert.ok(error.inferenceDiagnostics.every(d=>d.responseText.includes('not-observed')));return true;});assert.equal(calls.length,3);
+});
+test('correction does not retry tool requests, privilege injection or transport failures',async()=>{
+ const calls=[];await assert.rejects(runtime({...attempt,observer:true},calls).inhabitant(request()),/unsupported intention/);assert.equal(calls.length,1);
+ let network=0;const broken=createModelRuntime({env:{AGENT_MODEL:'test',OPENAI_API_KEY:'test'},fetchImpl:async()=>{network++;throw Error('Network down');}});await assert.rejects(broken.inhabitant(request()),/Network down/);assert.equal(network,1);
+});
+test('truncated and malformed intention JSON are corrected without changing evidence',async()=>{
+ const calls=[];let n=0;const r=await runtime(()=>{n++;return n===1?{status:'incomplete',output_text:'{"action":'}:n===2?{output_text:'{bad JSON'}:{output_text:JSON.stringify(attempt)};},calls).inhabitant(request());assert.equal(calls.length,3);assert.deepEqual(r.intention,attempt);assert.deepEqual(r.inferenceDiagnostics.map(d=>d.code),['INHABITANT_OUTPUT_INCOMPLETE','INHABITANT_JSON_INVALID']);assert.ok(calls.every(c=>c.body.input===calls[0].body.input));
+});

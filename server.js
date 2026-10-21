@@ -48,7 +48,7 @@ function inference(req,res,inhabitant=false){
  let raw='';req.on('data',chunk=>{raw+=chunk;if(raw.length>2000000)req.destroy();});
  req.on('end',async()=>{
   let input;try{input=JSON.parse(raw||'{}');if(inhabitant)Inhabitant.request(input);else refereeRequest(input);}catch(error){return send(res,400,{error:error.message||'Invalid request.'});}
-  try{return send(res,200,await (inhabitant?runtime.inhabitant(input):runtime.referee(input)));}catch(error){const timeout=error.name==='TimeoutError';return send(res,timeout?504:503,{error:timeout?'Model response exceeded its deadline; the day was not committed.':error.message||'Tool-free model request failed.'});}
+  try{return send(res,200,await (inhabitant?runtime.inhabitant(input):runtime.referee(input)));}catch(error){const timeout=error.name==='TimeoutError';return send(res,timeout?504:503,{error:timeout?'Model response exceeded its deadline; the day was not committed.':error.message||'Tool-free model request failed.',...(error.inferenceDiagnostics?{inferenceDiagnostics:error.inferenceDiagnostics}:{})});}
  });
 }
 
