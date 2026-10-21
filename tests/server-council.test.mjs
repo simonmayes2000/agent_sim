@@ -16,7 +16,7 @@ test('one browser request collects ten separate model referee votes',async()=>{
       const request=JSON.parse(body);requests.push(request);const prompt=request.input;
       const approve=!prompt.includes('You are the Social referee');
       res.writeHead(200,{'Content-Type':'application/json'});
-      res.end(JSON.stringify({output_text:JSON.stringify({approve,reason:approve?'Feasible':'Social concern'})}));
+      res.end(JSON.stringify({output_text:JSON.stringify({approve,reason:approve?'Feasible':'Social concern',...(request.text?.format?.schema?.properties?.scope?{scope:approve?'none':'proposal',target:approve?'':'/proposal/relationships/0',evidence:approve?'':'The claimed social change lacks an interaction.'}:{})})}));
     });
   });
   const upstreamPort=await listen(upstream);
@@ -39,6 +39,7 @@ test('one browser request collects ten separate model referee votes',async()=>{
     assert.equal(outcome.status,200);assert.ok(requests.slice(-10).every(r=>r.input.includes('PROPOSED ACTUAL OUTCOME')));
     const largeFacts={kind:'edict',mode:'open-world',proposal:{summary:'A day with full evidence.'},before:{tiles:Array.from({length:80},(_,i)=>({i,type:'ground',description:'Evidence '+i+' '+('x'.repeat(1000))}))},after:{day:4},observerRequest:null};
     const complete=await fetch(`http://127.0.0.1:${port}/api/council`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({facts:largeFacts})});assert.equal(complete.status,200);assert.ok(requests.slice(-10).every(r=>r.input.includes('Evidence 0 ')&&r.input.includes('Evidence 79 ')));
+    const scoped=await fetch(`http://127.0.0.1:${port}/api/council`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({facts:{kind:'edict',mode:'open-world',reviewContract:{version:2},reviewTargets:[{path:'/proposal/relationships/0',roles:['Social'],value:{from:1,to:2,change:10}}],engineAuthority:{rules:{dailyFood:1},automaticEffects:[]},proposal:{summary:'A claimed social change.',relationships:[{from:1,to:2,change:10}]}}})});const scopedVotes=(await scoped.json()).votes;assert.equal(scoped.status,200);assert.equal(scopedVotes.find(v=>v.name==='Social').target,'/proposal/relationships/0');assert.ok(requests.slice(-10).every(r=>r.text.format.strict&&r.text.format.schema.required.includes('evidence')&&r.input.includes('engineAuthority')));
     const author=await fetch(`http://127.0.0.1:${port}/api/agent`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({purpose:'world-resolution',prompt:'Author a compact open-world outcome.',max_output_tokens:5000})});
     assert.equal(author.status,200);assert.equal(requests.at(-1).max_output_tokens,5000);
   }finally{

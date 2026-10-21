@@ -1,0 +1,326 @@
+{
+  "state": {
+    "day": 7,
+    "width": 8,
+    "height": 6,
+    "seed": 3347680040,
+    "weather": "clear",
+    "nextId": 3,
+    "explored": [
+      16,
+      17
+    ],
+    "tiles": [
+      {
+        "type": "rock"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "rock"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "grass"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      },
+      {
+        "type": "forest"
+      }
+    ],
+    "agents": [
+      {
+        "id": 1,
+        "name": "Adam",
+        "alive": true,
+        "x": 0,
+        "y": 2,
+        "health": 90,
+        "energy": 63,
+        "food": 1,
+        "water": 1,
+        "age": 26,
+        "genes": {
+          "curiosity": 55,
+          "empathy": 61,
+          "caution": 50,
+          "stamina": 62,
+          "sociability": 58,
+          "resilience": 57,
+          "patience": 54,
+          "creativity": 52,
+          "awareness": 56,
+          "generosity": 57,
+          "adaptability": 58,
+          "boldness": 51
+        },
+        "parents": [],
+        "gen": 0,
+        "likes": {
+          "2": 50
+        },
+        "knowledge": [],
+        "seenTiles": [
+          16
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Eve",
+        "alive": true,
+        "x": 1,
+        "y": 2,
+        "health": 90,
+        "energy": 63,
+        "food": 1,
+        "water": 1,
+        "age": 26,
+        "genes": {
+          "curiosity": 62,
+          "empathy": 67,
+          "caution": 54,
+          "stamina": 57,
+          "sociability": 63,
+          "resilience": 56,
+          "patience": 61,
+          "creativity": 62,
+          "awareness": 59,
+          "generosity": 61,
+          "adaptability": 58,
+          "boldness": 55
+        },
+        "parents": [],
+        "gen": 0,
+        "likes": {
+          "1": 50
+        },
+        "knowledge": [],
+        "seenTiles": [
+          17
+        ]
+      }
+    ],
+    "events": [],
+    "tech": {
+      "nodes": [],
+      "trials": []
+    },
+    "openWorld": {
+      "enabled": true,
+      "entities": [],
+      "laws": [],
+      "history": [],
+      "processes": [
+        {
+          "id": "physio-day5-review-6",
+          "description": "Review of day-5 social stasis between Adam and Eve to ensure causal linkage between observed social state and underlying physiological/psychological constraints; confirm that daily bodily upkeep is applied per core rules and that no unintended deltas are introduced.",
+          "status": "resolved",
+          "subjects": [
+            1,
+            2
+          ],
+          "review": "Physiology and social dynamics explain the lack of interaction: both agents maintain distance to reduce risk, while core bodily upkeep (health/energy/food/water) proceeds according to the PHYSICAL CORE. The previous proposal claimed 'no changes' but daily upkeep is still applied by the engine; a causal narrative now accounts for why no transfers or deltas occur despite nearby presence. The outcome is updated to reflect a stable social stasis with a documented rationale.",
+          "reviewInDays": null,
+          "lastReviewed": 7,
+          "nextReviewDay": null
+        }
+      ]
+    }
+  },
+  "proposal": {
+    "summary": "Day 7 concluded with Adam and Eve maintaining a cautious, non-engaged survey of their surroundings; no new entities, terrain, or discoveries occurred. A physiology/social review clarified that daily bodily upkeep proceeded per core rules and justified the observed social stasis. No material changes to the world state occurred.",
+    "processes": [
+      {
+        "id": "physio-day5-review-6",
+        "description": "Review of day-5 social stasis between Adam and Eve to ensure causal linkage between observed social state and underlying physiological/psychological constraints; confirm that daily bodily upkeep is applied per core rules and that no unintended deltas are introduced.",
+        "status": "resolved",
+        "subjects": [
+          1,
+          2
+        ],
+        "review": "Physiology and social dynamics explain the lack of interaction: both agents maintain distance to reduce risk, while core bodily upkeep (health/energy/food/water) proceeds according to the PHYSICAL CORE. The previous proposal claimed 'no changes' but daily upkeep is still applied by the engine; a causal narrative now accounts for why no transfers or deltas occur despite nearby presence. The outcome is updated to reflect a stable social stasis with a documented rationale.",
+        "reviewInDays": 1
+      }
+    ]
+  },
+  "votes": [
+    {
+      "name": "Conservation",
+      "approve": true,
+      "reason": "Day 7\u20138 proposal maintains cautious, non-engaged survey with no unexplained deltas; no contradictions found in pre/post states; maintaining social stasis with plausible physiological constraints aligns with open-world dynamics."
+    },
+    {
+      "name": "Space",
+      "approve": true,
+      "reason": "No concrete contradiction; day7-8 narrative preserves causal consistency and safety dynamics; minimal changes and upheld daily upkeep align with stated intentions"
+    },
+    {
+      "name": "Causality",
+      "approve": true,
+      "reason": "The day7-8 snapshot shows stable social stasis with coherent causal explanations; no unauthorised resource transfers or unexplained creation; no concrete contradictions found in the after-state regarding intentions and upkeep."
+    },
+    {
+      "name": "Ecology",
+      "approve": true,
+      "reason": "No concrete conflict detected; the Day 7\u20138 narrative preserves causal consistency and safe social stasis with updated upkeep rationale; no unexplained creation or unearned knowledge present."
+    },
+    {
+      "name": "Physiology",
+      "approve": true,
+      "reason": "Day 7-8 narrative remains causally consistent: no unexpected transfers, upkeep governs bodily state, and social stasis is explained by safety posture; no unresolved deltas. Provincial contradictions appear addressed by the physiologic review; thus no veto warranted."
+    },
+    {
+      "name": "Knowledge",
+      "approve": true,
+      "reason": "No concrete conflict found; the day7\u20138 narrative maintains causal consistency with preserved social stasis and explicit upkeep, and any new effects are explained by ongoing bodily maintenance rather than unexplained changes."
+    },
+    {
+      "name": "Social",
+      "approve": true,
+      "reason": "No concrete contradiction found; the day7\u20138 narrative maintains causal consistency with stated intentions and prior upkeep mechanics, and unresolved processes are explained by ongoing safety posture and physiology constraints."
+    },
+    {
+      "name": "Heredity",
+      "approve": true,
+      "reason": "Day-7 narrative remains causally consistent within the system: no ungrounded changes, observed social stasis explained by ongoing careful survey and upkeep, and no unexplained transfers. The proposal aligns with intended open-world dynamics and documents plausible constraints; unresolved per-process"
+    },
+    {
+      "name": "Engineering",
+      "approve": true,
+      "reason": "No concrete contradiction found; proposed Day7-8 outcome maintains consistent social stasis with explained upkeep, and no unexplained resource transfers or rule violations were evident."
+    },
+    {
+      "name": "Overseer boundary",
+      "approve": false,
+      "reason": "Unexplained negative health/energy deltas and conflicting maintenance narrative create causal inconsistency; unresolved per-process changes and deterministic audit imply mismatch between stated stasis and bodily upkeep."
+    }
+  ]
+}

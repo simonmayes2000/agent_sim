@@ -1,3 +1,7 @@
+# Review authority and world time
+
+Review policy 2 supersedes the previous unanimity gate. Established physics is engine-owned; model review concerns only concrete authored additions within each reviewer’s domain. Unapproved additions are withheld rather than converted into facts. A fully determined engine-only day can proceed, while outages, explicit observer requests and unresolved due-world processes remain held. See README’s day-resolution authority section and the captured day-seven regression fixture.
+
 # Items five and six: continuity and experiment archive
 
 `dist/continuity.js` stores agent-authored preferences, beliefs/predictions, commitments and explicit addressed offers/messages. Evidence citations and dated revisions preserve mistakes without upgrading beliefs to facts. Delivery is grounded in final hearing range; acceptance requires an actual received offer and grants no resource authority.

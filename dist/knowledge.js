@@ -35,7 +35,7 @@
   initialize(state);
   for(const a of state.agents.filter(a=>a.alive&&(!actors||actors.includes(a.id)))){
    const i=place(state,a),t=state.tiles[i];
-   put(a,state,{subject:'body',subjectId:'self',value:{condition:{health:a.health,energy:a.energy,nourishment:a.food,hydration:a.water},states:(a.worldStates||[]).filter(s=>s.perceived!==false).map(s=>({name:s.name,description:s.description}))}});
+   put(a,state,{subject:'body',subjectId:'self',value:{condition:{health:a.health,energy:a.energy,nourishment:a.food,hydration:a.water,sensations:[...(a.food<=1?['I am very hungry.']:a.food<=3?['I feel hungry.']:[]),...(a.water<=1?['I am very thirsty.']:a.water<=3?['I feel thirsty.']:[]),...(a.health<80?['I feel physically weaker.']:[]),...(a.energy<15?['I feel exhausted.']:[])]},states:(a.worldStates||[]).filter(s=>s.perceived!==false).map(s=>({name:s.name,description:s.description}))}});
    put(a,state,{subject:'people',subjectId:'nearby',value:state.agents.filter(b=>b.id!==a.id&&nearby(a,b)).map(b=>({id:b.id,name:b.name}))});
    put(a,state,{subject:'place',subjectId:i,value:{tile:i,type:t?.type||'unresolved ground',description:t?.description||''}});
    const seen=new Set();

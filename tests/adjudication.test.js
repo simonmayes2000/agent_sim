@@ -32,18 +32,18 @@ test('the council sees all physical entities, terrain, private knowledge evidenc
  const e=Adjudication.evidence(s,{summary:'A quiet day.'},intentions,null);assert.equal(e.before.entities.length,20);assert.equal(e.before.tiles[1].properties.hiddenMechanism,'relevant to the outcome');assert.ok(e.before.agents[0].evidenceRecords);assert.equal(e.after.agents[0].food,19);assert.equal(e.proposal.summary,'A quiet day.');assert.ok(e.deterministicAudit.some(e=>e.kind==='upkeep'));assert.equal(s.day,4);
 });
 test('a concrete veto triggers a corrected outcome against the same intentions and same before-state',async()=>{
- const s=fixture(),prompts=[],reviews=[];let councils=0;const r=await Adjudication.resolve(s,intentions,null,{askAuthor:async prompt=>{prompts.push(prompt);return {summary:prompts.length===1?'A questionable event.':'A corrected grounded event.'};},askCouncil:async facts=>{reviews.push(facts);const votes=allow();if(councils++===0)votes[0]={name:World.roles[0],approve:false,reason:'The stated cause is unsupported.'};return votes;}});
+ const s=fixture(),prompts=[],reviews=[];let councils=0;const r=await Adjudication.resolve(s,intentions,null,{askAuthor:async prompt=>{prompts.push(prompt);return {summary:prompts.length===1?'A questionable event.':'A corrected grounded event.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async facts=>{reviews.push(facts);const votes=allow();if(councils++===0)votes[2]={name:World.roles[2],approve:false,reason:'The stated cause is unsupported.',scope:'proposal',target:'/proposal/agents/0/experience',evidence:'The proposed experience has an unsupported cause.'};return votes;}});
  assert.equal(r.revision,1);assert.equal(prompts.length,2);assert.match(prompts[1],/stated cause is unsupported/);assert.deepEqual(reviews[0].intentions,reviews[1].intentions);assert.deepEqual(reviews[0].before,reviews[1].before);assert.equal(s.day,4);
 });
 test('an unavailable reviewer is not treated as a semantic veto or an excuse to fabricate approval',async()=>{
- let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;return {summary:'An ordinary day.'};},askCouncil:async()=>allow().map((v,i)=>i===0?{...v,approve:false,reason:'Model unavailable: offline'}:v)}),/reviewer is unavailable/);assert.equal(calls,1);
+ let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;return {summary:'An ordinary day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>allow().map((v,i)=>i===0?{...v,approve:false,reason:'Model unavailable: offline'}:v)}),/reviewer is unavailable/);assert.equal(calls,1);
 });
 test('invalid data is repaired with a specific error and cannot reach the council before validation',async()=>{
- const s=fixture();let calls=0,reviews=0;const prompts=[];await Adjudication.resolve(s,intentions,null,{askAuthor:async prompt=>{prompts.push(prompt);return ++calls===1?'{malformed':{summary:'A corrected day.'};},askCouncil:async()=>{reviews++;return allow();}});assert.equal(calls,2);assert.equal(reviews,1);assert.match(prompts[1],/CORRECTION REQUIRED/);assert.equal(s.day,4);
+ const s=fixture();let calls=0,reviews=0;const prompts=[];await Adjudication.resolve(s,intentions,null,{askAuthor:async prompt=>{prompts.push(prompt);return ++calls===1?'{malformed':{summary:'A corrected day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>{reviews++;return allow();}});assert.equal(calls,2);assert.equal(reviews,1);assert.match(prompts[1],/CORRECTION REQUIRED/);assert.equal(s.day,4);
 });
 test('transport failure does not burn through model repairs, and incomplete councils cannot approve',async()=>{
  let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;throw Error('offline');},askCouncil:async()=>allow()}),/offline/);assert.equal(calls,1);
- await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>({summary:'A day.'}),askCouncil:async()=>allow().map(()=>allow()[0])}),/duplicate reviewer/);
+ await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>({summary:'A day.',agents:[{id:1,experience:'I inspect the ground.'}]}),askCouncil:async()=>allow().map(()=>allow()[0])}),/duplicate reviewer/);
 });
 test('intention choices persist across retries and reload, with cache invalidation for changed personal context',async()=>{
  let s=fixture(),calls=0;const choose=async()=>{calls++;return attempt;};const first=await Adjudication.intentions(s,choose);assert.equal(calls,1);s=JSON.parse(JSON.stringify(s));World.capturePerceptions(s);const second=await Adjudication.intentions(s,choose);assert.equal(calls,1);assert.deepEqual(first,second);
@@ -66,6 +66,6 @@ test('partial provider output is treated as repairable data, not as a committed 
  let calls=0;await Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{if(++calls===1)throw Object.assign(Error('Model output was incomplete'),{repairable:true,responseText:'{"summary":'});return {summary:'A concise complete day.'};},askCouncil:async()=>allow()});assert.equal(calls,2);
 });
 
-test('mixed formatting failures and vetoes have an overall author-call budget',async()=>{
- let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{maxAuthorCalls:2,askAuthor:async()=>++calls===1?'{bad':{summary:'A questionable event.'},askCouncil:async()=>allow().map((v,i)=>i===0?{...v,approve:false,reason:'A concrete unresolved contradiction.'}:v)}),/revision budget exhausted/);assert.equal(calls,2);
+test('mixed formatting failures and vetoes have an overall budget without freezing an engine-only day',async()=>{
+ let calls=0;const r=await Adjudication.resolve(fixture(),intentions,null,{maxAuthorCalls:2,askAuthor:async()=>++calls===1?'{bad':{summary:'A questionable event.',agents:[{id:1,experience:'An unsupported observation.'}]},askCouncil:async()=>allow().map((v,i)=>i===0?{...v,approve:false,reason:'A concrete unresolved contradiction.'}:v)});assert.equal(calls,2);assert.equal(r.mode,'engine-only');assert.ok(!r.outcome.agents);
 });
