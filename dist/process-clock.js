@@ -5,7 +5,7 @@
  const copy=v=>JSON.parse(JSON.stringify(v));
  const fail=(message,code)=>{const error=Error('Process review: '+message);error.code=code;throw error;};
  function due(state){return (state.openWorld?.processes||[]).filter(p=>p.status==='active'&&(!Number.isInteger(p.nextReviewDay)||p.nextReviewDay<=state.day+1));}
- function prepare(state,proposal){
+ function prepare(state,proposal,{deferProcessReviews=false}={}){
   const p=copy(proposal),day=state.day+1,old=state.openWorld?.processes||[],updates=p.processes||[],ids=new Set(),corrections=[];
   if(!Array.isArray(updates))fail('processes must be an array.','PROCESS_SHAPE');
   p.processes=updates.map(change=>{
@@ -23,7 +23,7 @@
    return {...merged,reviewInDays:interval,lastReviewed:day,nextReviewDay:day+interval};
   });
   const missing=due(state).filter(process=>!ids.has(process.id));
-  if(missing.length)fail('Due processes need explicit consequence/stability reviews: '+missing.map(p=>JSON.stringify(p.id)).join(', ')+'. Apply their actual effects in the outcome and review each ID; the engine supplies future dates.','PROCESS_REVIEW_MISSING');
+  if(missing.length&&!deferProcessReviews)fail('Due processes need explicit consequence/stability reviews: '+missing.map(p=>JSON.stringify(p.id)).join(', ')+'. Apply their actual effects in the outcome and review each ID; the engine supplies future dates.','PROCESS_REVIEW_MISSING');
   if(corrections.length)p.calendarCorrections=corrections;
   else delete p.calendarCorrections;
   return p;

@@ -48,6 +48,6 @@
   if(observer||rows.some(r=>r.path.startsWith('/proposal/laws')||r.path.startsWith('/proposal/newPeople')))return all;
   const needed=new Set(rows.flatMap(r=>r.roles));return all.filter(r=>needed.has(r));
  }
- const contract={version:3,principle:'The engine owns the clock, daily upkeep, travel costs and previously scheduled effects. Only actual authored changes in reviewTargets may receive a blocking objection, within that reviewer’s listed domain. Cite its exact path and before/proposed evidence. Narrative wording and disputes about the engine’s established rules are advisory. Rejected additions do not stop an otherwise fully determined day; they are not committed.',scopes:['none','proposal','engine','narrative']};
+ const contract={version:4,principle:'The engine owns the clock, daily upkeep, travel costs and previously scheduled effects. Only actual authored changes in reviewTargets may receive a blocking objection, within that reviewer’s listed domain. Cite its exact path and before/proposed evidence. Narrative wording and disputes about the engine’s established rules are advisory. Rejected additions do not stop an otherwise fully determined day; they are not committed.',scopes:['none','proposal','engine','narrative']};
  root.ReviewPolicy={targets,assess,reviewers,contract};if(typeof module!=='undefined')module.exports=root.ReviewPolicy;
 })(typeof window!=='undefined'?window:globalThis);

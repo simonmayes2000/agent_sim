@@ -35,15 +35,15 @@ test('a concrete veto triggers a corrected outcome against the same intentions a
  const s=fixture(),prompts=[],reviews=[];let councils=0;const r=await Adjudication.resolve(s,intentions,null,{askAuthor:async prompt=>{prompts.push(prompt);return {summary:prompts.length===1?'A questionable event.':'A corrected grounded event.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async facts=>{reviews.push(facts);const votes=allow();if(councils++===0)votes[2]={name:World.roles[2],approve:false,reason:'The stated cause is unsupported.',scope:'proposal',target:'/proposal/agents/0/experience',evidence:'The proposed experience has an unsupported cause.'};return votes;}});
  assert.equal(r.revision,1);assert.equal(prompts.length,2);assert.match(prompts[1],/stated cause is unsupported/);assert.deepEqual(reviews[0].intentions,reviews[1].intentions);assert.deepEqual(reviews[0].before,reviews[1].before);assert.equal(s.day,4);
 });
-test('an unavailable reviewer is not treated as a semantic veto or an excuse to fabricate approval',async()=>{
- let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;return {summary:'An ordinary day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>allow().map((v,i)=>v.name==='Causality'?{...v,approve:false,reason:'Model unavailable: offline'}:v)}),/reviewer is unavailable/);assert.equal(calls,1);
+test('an unavailable reviewer withholds only the proposed addition, without fabricating approval',async()=>{
+ let calls=0;const r=await Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;return {summary:'An ordinary day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>allow().map(v=>v.name==='Causality'?{...v,approve:false,reason:'Model unavailable: offline'}:v)});assert.equal(calls,1);assert.equal(r.mode,'engine-only');assert.equal(r.resolution.proposalWithheld,true);assert.ok(!r.outcome.agents);
 });
 test('invalid data is repaired with a specific error and cannot reach the council before validation',async()=>{
  const s=fixture();let calls=0,reviews=0;const prompts=[];await Adjudication.resolve(s,intentions,null,{askAuthor:async prompt=>{prompts.push(prompt);return ++calls===1?'{malformed':{summary:'A corrected day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>{reviews++;return allow();}});assert.equal(calls,2);assert.equal(reviews,1);assert.match(prompts[1],/CORRECTION REQUIRED/);assert.equal(s.day,4);
 });
-test('transport failure does not burn through model repairs, and incomplete councils cannot approve',async()=>{
- let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;throw Error('offline');},askCouncil:async()=>allow()}),/offline/);assert.equal(calls,1);
- await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>({summary:'A day.',agents:[{id:1,experience:'I inspect the ground.'}]}),askCouncil:async()=>allow().map(()=>allow()[0])}),/duplicate reviewer/);
+test('transport failures and incomplete councils cannot approve novel additions or consume repair loops',async()=>{
+ let calls=0;const offline=await Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;throw Error('offline');},askCouncil:async()=>allow()});assert.equal(calls,1);assert.equal(offline.mode,'engine-only');assert.match(offline.resolution.reason,/offline/);
+ const bad=await Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>({summary:'A day.',agents:[{id:1,experience:'I inspect the ground.'}]}),askCouncil:async()=>allow().map(()=>allow()[0])});assert.equal(bad.mode,'engine-only');assert.match(bad.resolution.reason,/duplicate reviewer/);assert.ok(!bad.outcome.agents);
 });
 test('intention choices persist across retries and reload, with cache invalidation for changed personal context',async()=>{
  let s=fixture(),calls=0;const choose=async()=>{calls++;return attempt;};const first=await Adjudication.intentions(s,choose);assert.equal(calls,1);s=JSON.parse(JSON.stringify(s));World.capturePerceptions(s);const second=await Adjudication.intentions(s,choose);assert.equal(calls,1);assert.deepEqual(first,second);
@@ -51,7 +51,7 @@ test('intention choices persist across retries and reload, with cache invalidati
 });
 test('a failed simultaneous request preserves completed intentions without accepting late stale replies',async()=>{
  const s=fixture();s.agents.push({...JSON.parse(JSON.stringify(s.agents[0])),id:2,name:'Eve',perceptionMemory:null});World.capturePerceptions(s);let current=true;
- await assert.rejects(()=>Adjudication.intentions(s,async a=>{if(a.id===1)return attempt;throw Error('Eve unavailable');},{current:()=>current}),/unavailable/);current=false;assert.equal(s.openWorld.pendingIntentions.intentions.length,1);let ids=[];await Adjudication.intentions(s,async a=>{ids.push(a.id);return attempt;});assert.deepEqual(ids,[2]);
+ const accepted=await Adjudication.intentions(s,async a=>{if(a.id===1)return attempt;throw Error('Eve unavailable');},{current:()=>current});assert.equal(accepted.length,1);assert.equal(s.openWorld.pendingIntentions.faults[0].actor,2);current=false;assert.equal(s.openWorld.pendingIntentions.intentions.length,1);let ids=[];await Adjudication.intentions(s,async a=>{ids.push(a.id);return attempt;});assert.deepEqual(ids,[2]);
 });
 test('the complete-evidence packet includes explicit observer authority, not an inference from intent text',()=>{
  const s=fixture(),observer={description:'Heal Adam.',tile:0},p={summary:'An external healing.',agents:[{id:1,delta:{health:10}}]};const e=Adjudication.evidence(s,p,[],observer);assert.deepEqual(e.observerRequest,observer);assert.equal(e.after.agents[0].health,90);assert.throws(()=>Adjudication.evidence(s,p,intentions,null),/healing exceeds/);

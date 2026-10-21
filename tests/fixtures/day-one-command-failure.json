@@ -1,0 +1,1574 @@
+{
+  "source": "Captured day-one malformed execution responses, 2026-10-21. Simulation data only.",
+  "state": {
+    "version": 3,
+    "day": 1,
+    "width": 8,
+    "height": 6,
+    "seed": 3398195233,
+    "weather": "clear",
+    "tiles": [
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 0,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 1,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 2,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 3,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 4,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 5,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 6,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 7,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 8,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 9,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 10,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 11,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 12,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 13,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 14,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 15,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 16,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 17,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 18,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 19,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 20,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 21,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 22,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 23,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 24,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 25,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 26,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 27,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 28,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 29,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 30,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "grass",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 31,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 32,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 33,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 34,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 35,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "rock",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 36,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "rock",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 37,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 38,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 39,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 40,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "forest",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 41,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 42,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 43,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "rock",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 44,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "rock",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 45,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 46,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      },
+      {
+        "type": "water",
+        "food": 0,
+        "foodRegenCap": 0,
+        "foodRegenCooldown": 0,
+        "lastFoodHarvestDay": null,
+        "water": 0,
+        "wood": 0,
+        "stone": 0,
+        "fibre": 0,
+        "i": 47,
+        "visits": 0,
+        "structures": [],
+        "items": [],
+        "territory": {}
+      }
+    ],
+    "agents": [
+      {
+        "id": 1,
+        "name": "Adam",
+        "x": 0,
+        "y": 2,
+        "genes": {
+          "curiosity": 55,
+          "empathy": 61,
+          "caution": 50,
+          "stamina": 62,
+          "sociability": 58,
+          "resilience": 57,
+          "patience": 54,
+          "creativity": 52,
+          "awareness": 56,
+          "generosity": 57,
+          "adaptability": 58,
+          "boldness": 51
+        },
+        "age": 20,
+        "gen": 0,
+        "parents": [],
+        "alive": true,
+        "health": 90,
+        "food": 7,
+        "water": 7,
+        "energy": 75,
+        "likes": {
+          "2": 50
+        },
+        "knowledge": [],
+        "observed": [],
+        "seenTiles": [
+          16
+        ],
+        "supplies": {
+          "wood": 0,
+          "stone": 0,
+          "fibre": 0
+        },
+        "project": null,
+        "clanId": null,
+        "noticedInterventions": [],
+        "knownItems": {},
+        "lastVisited": null,
+        "lastAction": "Looking around",
+        "born": 1,
+        "death": null,
+        "exploration": {
+          "ground": {
+            "16": {
+              "type": "grass",
+              "sheltered": false,
+              "revision": 1,
+              "food": 0,
+              "water": 0,
+              "wood": 0,
+              "stone": 0,
+              "fibre": 0
+            },
+            "17": {
+              "type": "grass",
+              "sheltered": false,
+              "revision": 2,
+              "food": 0,
+              "water": 0,
+              "wood": 0,
+              "stone": 0,
+              "fibre": 0
+            }
+          },
+          "waypoints": {}
+        },
+        "perceptionMemory": {
+          "version": 1,
+          "nextId": 5,
+          "facts": {
+            "[\"place\",\"16\",\"legacy\"]": {
+              "subject": "place",
+              "subjectId": "16",
+              "value": {
+                "tile": 16,
+                "type": "grass",
+                "description": "Imported from an older save; no dated observation was recorded."
+              },
+              "kind": "legacy",
+              "observer": 1,
+              "day": null,
+              "tile": 16,
+              "observedDay": null,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e1"
+            },
+            "[\"body\",\"self\",\"observation\"]": {
+              "subject": "body",
+              "subjectId": "self",
+              "value": {
+                "condition": {
+                  "health": 90,
+                  "energy": 75,
+                  "nourishment": 7,
+                  "hydration": 7,
+                  "sensations": []
+                },
+                "states": []
+              },
+              "kind": "observation",
+              "observer": 1,
+              "day": 1,
+              "tile": 16,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e2"
+            },
+            "[\"people\",\"nearby\",\"observation\"]": {
+              "subject": "people",
+              "subjectId": "nearby",
+              "value": [
+                {
+                  "id": 2,
+                  "name": "Eve"
+                }
+              ],
+              "kind": "observation",
+              "observer": 1,
+              "day": 1,
+              "tile": 16,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e3"
+            },
+            "[\"place\",\"16\",\"observation\"]": {
+              "subject": "place",
+              "subjectId": "16",
+              "value": {
+                "tile": 16,
+                "type": "grass",
+                "description": ""
+              },
+              "kind": "observation",
+              "observer": 1,
+              "day": 1,
+              "tile": 16,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e4"
+            }
+          },
+          "records": [
+            {
+              "subject": "place",
+              "subjectId": "16",
+              "value": {
+                "tile": 16,
+                "type": "grass",
+                "description": "Imported from an older save; no dated observation was recorded."
+              },
+              "kind": "legacy",
+              "observer": 1,
+              "day": null,
+              "tile": 16,
+              "observedDay": null,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e1"
+            },
+            {
+              "subject": "body",
+              "subjectId": "self",
+              "value": {
+                "condition": {
+                  "health": 90,
+                  "energy": 75,
+                  "nourishment": 7,
+                  "hydration": 7,
+                  "sensations": []
+                },
+                "states": []
+              },
+              "kind": "observation",
+              "observer": 1,
+              "day": 1,
+              "tile": 16,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e2"
+            },
+            {
+              "subject": "people",
+              "subjectId": "nearby",
+              "value": [
+                {
+                  "id": 2,
+                  "name": "Eve"
+                }
+              ],
+              "kind": "observation",
+              "observer": 1,
+              "day": 1,
+              "tile": 16,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e3"
+            },
+            {
+              "subject": "place",
+              "subjectId": "16",
+              "value": {
+                "tile": 16,
+                "type": "grass",
+                "description": ""
+              },
+              "kind": "observation",
+              "observer": 1,
+              "day": 1,
+              "tile": 16,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "1:e4"
+            }
+          ],
+          "references": {}
+        }
+      },
+      {
+        "id": 2,
+        "name": "Eve",
+        "x": 1,
+        "y": 2,
+        "genes": {
+          "curiosity": 62,
+          "empathy": 67,
+          "caution": 54,
+          "stamina": 57,
+          "sociability": 63,
+          "resilience": 56,
+          "patience": 61,
+          "creativity": 62,
+          "awareness": 59,
+          "generosity": 61,
+          "adaptability": 58,
+          "boldness": 55
+        },
+        "age": 20,
+        "gen": 0,
+        "parents": [],
+        "alive": true,
+        "health": 90,
+        "food": 7,
+        "water": 7,
+        "energy": 75,
+        "likes": {
+          "1": 50
+        },
+        "knowledge": [],
+        "observed": [],
+        "seenTiles": [
+          17
+        ],
+        "supplies": {
+          "wood": 0,
+          "stone": 0,
+          "fibre": 0
+        },
+        "project": null,
+        "clanId": null,
+        "noticedInterventions": [],
+        "knownItems": {},
+        "lastVisited": null,
+        "lastAction": "Looking around",
+        "born": 1,
+        "death": null,
+        "exploration": {
+          "ground": {
+            "16": {
+              "type": "grass",
+              "sheltered": false,
+              "revision": 1,
+              "food": 0,
+              "water": 0,
+              "wood": 0,
+              "stone": 0,
+              "fibre": 0
+            },
+            "17": {
+              "type": "grass",
+              "sheltered": false,
+              "revision": 2,
+              "food": 0,
+              "water": 0,
+              "wood": 0,
+              "stone": 0,
+              "fibre": 0
+            }
+          },
+          "waypoints": {}
+        },
+        "perceptionMemory": {
+          "version": 1,
+          "nextId": 5,
+          "facts": {
+            "[\"place\",\"17\",\"legacy\"]": {
+              "subject": "place",
+              "subjectId": "17",
+              "value": {
+                "tile": 17,
+                "type": "grass",
+                "description": "Imported from an older save; no dated observation was recorded."
+              },
+              "kind": "legacy",
+              "observer": 2,
+              "day": null,
+              "tile": 17,
+              "observedDay": null,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e1"
+            },
+            "[\"body\",\"self\",\"observation\"]": {
+              "subject": "body",
+              "subjectId": "self",
+              "value": {
+                "condition": {
+                  "health": 90,
+                  "energy": 75,
+                  "nourishment": 7,
+                  "hydration": 7,
+                  "sensations": []
+                },
+                "states": []
+              },
+              "kind": "observation",
+              "observer": 2,
+              "day": 1,
+              "tile": 17,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e2"
+            },
+            "[\"people\",\"nearby\",\"observation\"]": {
+              "subject": "people",
+              "subjectId": "nearby",
+              "value": [
+                {
+                  "id": 1,
+                  "name": "Adam"
+                }
+              ],
+              "kind": "observation",
+              "observer": 2,
+              "day": 1,
+              "tile": 17,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e3"
+            },
+            "[\"place\",\"17\",\"observation\"]": {
+              "subject": "place",
+              "subjectId": "17",
+              "value": {
+                "tile": 17,
+                "type": "grass",
+                "description": ""
+              },
+              "kind": "observation",
+              "observer": 2,
+              "day": 1,
+              "tile": 17,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e4"
+            }
+          },
+          "records": [
+            {
+              "subject": "place",
+              "subjectId": "17",
+              "value": {
+                "tile": 17,
+                "type": "grass",
+                "description": "Imported from an older save; no dated observation was recorded."
+              },
+              "kind": "legacy",
+              "observer": 2,
+              "day": null,
+              "tile": 17,
+              "observedDay": null,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e1"
+            },
+            {
+              "subject": "body",
+              "subjectId": "self",
+              "value": {
+                "condition": {
+                  "health": 90,
+                  "energy": 75,
+                  "nourishment": 7,
+                  "hydration": 7,
+                  "sensations": []
+                },
+                "states": []
+              },
+              "kind": "observation",
+              "observer": 2,
+              "day": 1,
+              "tile": 17,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e2"
+            },
+            {
+              "subject": "people",
+              "subjectId": "nearby",
+              "value": [
+                {
+                  "id": 1,
+                  "name": "Adam"
+                }
+              ],
+              "kind": "observation",
+              "observer": 2,
+              "day": 1,
+              "tile": 17,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e3"
+            },
+            {
+              "subject": "place",
+              "subjectId": "17",
+              "value": {
+                "tile": 17,
+                "type": "grass",
+                "description": ""
+              },
+              "kind": "observation",
+              "observer": 2,
+              "day": 1,
+              "tile": 17,
+              "observedDay": 1,
+              "sourceActor": null,
+              "sourceName": null,
+              "sourceRecordId": null,
+              "reason": null,
+              "id": "2:e4"
+            }
+          ],
+          "references": {}
+        }
+      }
+    ],
+    "nextId": 3,
+    "events": [
+      {
+        "day": 1,
+        "type": "world",
+        "who": null,
+        "text": "Adam and Eve wake beneath an open sky. Neither knows this place yet."
+      },
+      {
+        "day": 1,
+        "type": "world",
+        "who": null,
+        "text": "No physical day was committed: Choose a valid execution kind and bounded parameters; use attempt for novel actions."
+      },
+      {
+        "day": 1,
+        "type": "world",
+        "who": null,
+        "text": "No physical day was committed: Choose a valid execution kind and bounded parameters; use attempt for novel actions."
+      },
+      {
+        "day": 1,
+        "type": "world",
+        "who": null,
+        "text": "No physical day was committed: Choose a valid execution kind and bounded parameters; use attempt for novel actions."
+      },
+      {
+        "day": 1,
+        "type": "world",
+        "who": null,
+        "text": "No physical day was committed: Choose a valid execution kind and bounded parameters; use attempt for novel actions."
+      }
+    ],
+    "explored": [
+      16,
+      17
+    ],
+    "tech": {
+      "nodes": [],
+      "trials": []
+    },
+    "openWorld": {
+      "enabled": true,
+      "initialized": false,
+      "entities": [],
+      "laws": [],
+      "history": [],
+      "processes": []
+    }
+  },
+  "responses": [
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "Eve",
+          "amount": 0
+        },
+        "speech": "",
+        "action": "inspect",
+        "reason": "Current view needs refreshing to plan next steps.",
+        "goal": {
+          "title": "Assess surroundings and social cue",
+          "reason": "Need up-to-date terrain and nearby contact status to decide action",
+          "next": "Possible interaction with Adam or exploration of grass tile"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "wait",
+          "entity": "",
+          "amount": 0
+        },
+        "speech": "",
+        "action": "wait",
+        "reason": "I want to let the nearby Adam reveal intent or respond first, and check if my energy and hydration remain stable before moving or speaking.",
+        "goal": {
+          "title": "Gauge Adam's intent and prepare to cooperate",
+          "reason": "Adam is nearby; establishing contact could yield information or help",
+          "next": "If Adam responds, decide on conversation or cooperation; otherwise explore nearby grass tile"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "",
+          "amount": 0
+        },
+        "speech": "I see Adam nearby on the grass tile ahead. I\u2019m feeling decent energy and nourishment, but I should approach cautiously and gauge his intent before speaking.",
+        "action": "inspect",
+        "reason": "To refresh current visible facts and confirm Adam's position and immediate surroundings before any interaction.",
+        "goal": {
+          "title": "Gauge Adam's intent and potentially cooperate",
+          "reason": "Adam is nearby; establishing contact could yield information or aid",
+          "next": "If Adam seems open, greet and propose cooperation; otherwise observe and reassess"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "",
+          "amount": 0
+        },
+        "speech": "I\u2019m here on grass near Adam. I feel reasonably okay but could use food and water soon. I\u2019ll take a careful look around and check in with Adam if he\u2019s nearby.",
+        "action": "inspect",
+        "reason": "Current view shows grassy tile 17 with Adam nearby. I should refresh terrain and social status before deciding next move.",
+        "goal": {
+          "title": "Assess surroundings and social contact",
+          "reason": "Need more situational awareness and potential assistance from Adam",
+          "next": "Decide whether to approach Adam or explore nearby tiles"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "",
+          "amount": 0
+        },
+        "speech": "I\u2019m Eve. I\u2019m here on grass, near Adam. I feel decent but hungry and a bit thirsty. I\u2019ll take a quick look around to refresh my sense of the space and check on Adam's presence before deciding what to do next.",
+        "action": "inspect",
+        "reason": "Current view shows grass tile 17 with Adam nearby. A brief terrain check may help decide whether to speak to Adam or move to a safer/strategic tile.",
+        "goal": {
+          "title": "Assess surroundings and social contact",
+          "reason": "Need situational awareness and potential interaction with Adam",
+          "next": "Decide whether to approach Adam or explore nearby tiles"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "",
+          "amount": 0
+        },
+        "speech": "Adam is nearby on the grass tile. I\u2019m feeling steady but hungry and a touch thirsty. I\u2019ll take a brief look around to confirm surroundings before deciding whether to greet him or move to a safer tile.",
+        "action": "inspect",
+        "reason": "Current view shows grass tile 17 with Adam nearby. A quick terrain check may help decide whether to approach or relocate.",
+        "goal": {
+          "title": "Assess surroundings and social contact",
+          "reason": "Determine whether to engage with Adam or relocate for safety or utility",
+          "next": "Choose to greet Adam or move to a different tile"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "Eve",
+          "amount": 0
+        },
+        "speech": "I\u2019m awake and here. I\u2019ll look around to understand my surroundings a bit better.",
+        "action": "inspect",
+        "reason": "Current view shows nearby grass tile and a person named Adam; I should refresh my immediate environment and confirm any changes.",
+        "goal": {
+          "title": "Survey surroundings",
+          "reason": "Gather current terrain and social context",
+          "next": "Decide whether to approach Adam or move toward known grass area"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "",
+          "amount": 0
+        },
+        "speech": "I\u2019m here, Eve. I\u2019ll take a quick look around to better understand my surroundings and any nearby people.",
+        "action": "inspect",
+        "reason": "Current view shows a grass tile at my position and a nearby person named Adam. I should refresh my immediate environment to decide whether to approach or stay.",
+        "goal": {
+          "title": "Assess immediate environment and decide next move",
+          "reason": "Gather fresh spatial and social context",
+          "next": "Choose to approach Adam, move toward grass area, or wait and listen"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 2,
+      "value": {
+        "execution": {
+          "kind": "move",
+          "entity": " Eve",
+          "amount": 0
+        },
+        "speech": "",
+        "action": "move",
+        "reason": "I\u2019m at (1,2) on grass tile 17 with Adam nearby. I might approach or observe. Moving up to three tiles could bring me within hearing or sight of Adam.",
+        "goal": {
+          "title": "Assess Adam and environment",
+          "reason": "Determine whether to greet, remain cautious, or seek information",
+          "next": "If safe, approach Adam; otherwise inspect surroundings or wait"
+        },
+        "targetEntityIds": [],
+        "destination": {
+          "x": 2,
+          "y": 2
+        }
+      }
+    },
+    {
+      "actor": 1,
+      "value": {
+        "execution": {
+          "kind": "inspect",
+          "entity": "self",
+          "amount": 0
+        },
+        "speech": "Hello Eve. I\u2019m Adam. How are you feeling today?",
+        "action": "speak",
+        "reason": "greeting and establishing contact with nearby person",
+        "goal": {
+          "title": "Check on Eve",
+          "reason": "get social information and potentially exchange aid or info",
+          "next": "assess Eve's response and decide on cooperative action"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 1,
+      "value": {
+        "execution": {
+          "kind": "wait",
+          "entity": "self",
+          "amount": 0
+        },
+        "speech": "",
+        "action": "wait",
+        "reason": "I will observe Eve's approach and assess whether to greet or communicate based on her reaction and my energy levels.",
+        "goal": {
+          "title": "Greet Eve and establish contact",
+          "reason": "nearby person present; potential social exchange or assistance",
+          "next": "decide on greeting or silent observation"
+        },
+        "targetEntityIds": [],
+        "destination": null
+      }
+    },
+    {
+      "actor": 1,
+      "value": {
+        "execution": {
+          "kind": "move",
+          "entity": "self",
+          "amount": 3
+        },
+        "speech": "I\u2019ll head toward Eve to greet her and see if she\u2019s receptive.",
+        "action": "move",
+        "reason": "Eve is nearby and the scene seems safe; a short approach could establish contact.",
+        "goal": {
+          "title": "Greet Eve and assess cooperation",
+          "reason": "Nearby person present; potential social exchange or assistance",
+          "next": "evaluate Eve's response and decide on further interaction"
+        },
+        "targetEntityIds": [],
+        "destination": {
+          "x": 2,
+          "y": 2
+        }
+      }
+    }
+  ]
+}

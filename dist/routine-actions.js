@@ -8,10 +8,10 @@ function validate(value){
  if(value==null)return null;
  const bad=()=>{throw Object.assign(Error('Choose a valid execution kind and bounded parameters; use attempt for novel actions.'),{code:'INVALID_EXECUTION'});};
  if(typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!['kind','entity','amount'].includes(k))||!kinds.includes(value.kind))bad();
+ if(value.kind!=='consume')return {kind:value.kind};
  if(value.entity!=null&&(typeof value.entity!=='string'||value.entity.length>120))bad();
  if(value.amount!=null&&(!Number.isFinite(value.amount)||value.amount<=0||value.amount>20))bad();
  if(value.kind==='consume'&&(!value.entity||value.amount==null))bad();
- if(value.kind!=='consume'&&(value.entity!=null||value.amount!=null))bad();
  return copy(value);
 }
 function compile(state,intentions,expansion={}){
