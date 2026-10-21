@@ -9,7 +9,7 @@ import {findCodex} from '../scripts/model-source-council.mjs';
 const require=createRequire(import.meta.url),{createModelRuntime}=require('../scripts/model-runtime.cjs');
 const view={day:1,name:'Adam',condition:{health:80,energy:60,nourishment:5,hydration:5},position:{x:0,y:0},visibleGround:{tile:0,type:'forest'},nearbyPeople:[],knownPlaces:[],entities:[],experiences:[],discoveries:[],goal:null,states:[],traits:{}};
 const req={actor:1,operation:'intention',view};
-const attempt={action:'Look around',reason:'I am curious',targetEntityIds:[]};
+const attempt={action:'Look around',reason:'I am curious',execution:{kind:'attempt'},speech:null,targetEntityIds:[]};
 const offline=async()=>{throw Error('network unavailable');};
 const noFallback=createModelRuntime({env:{}});
 function toolFreeRuntime(answer,calls=[]){return createModelRuntime({env:{OPENAI_API_KEY:'test-key',AGENT_MODEL:'test-model'},fetchImpl:async(url,options)=>{calls.push(JSON.parse(options.body));return {ok:true,json:async()=>({output_text:JSON.stringify(answer)})};}});}

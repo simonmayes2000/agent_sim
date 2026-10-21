@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const Inhabitant=require('../dist/inhabitant.js');
 const {createModelRuntime,refereeRequest}=require('../scripts/model-runtime.cjs');
 function request(operation='intention'){return {actor:1,operation,view:{day:3,name:'Adam',condition:{health:80,energy:60,nourishment:5,hydration:6},position:{x:0,y:0},visibleGround:{tile:0,type:'forest'},nearbyPeople:[{id:2,name:'Eve'}],knownPlaces:[{tile:0,type:'forest'}],entities:[{id:'seen',name:'Folded growth',appearance:'Pale folds',tile:0,quantity:2,knownProperties:{taste:'briny'}}],experiences:[{day:2,text:'I see trees.'}],discoveries:[],goal:null,states:[],traits:{curiosity:60}}};}
-const attempt={action:'Inspect the pale folds',reason:'I am curious',goal:{title:'Understand the growth',reason:'Curiosity',next:'Look closely'},targetEntityIds:['seen']};
+const attempt={action:'Inspect the pale folds',reason:'I am curious',goal:{title:'Understand the growth',reason:'Curiosity',next:'Look closely'},execution:{kind:'attempt'},speech:null,targetEntityIds:['seen']};
 function runtime(answer,requests=[]){return createModelRuntime({env:{AGENT_MODEL:'referee-test',OPENAI_API_KEY:'fake-referee-key',OPENAI_API_URL:'https://referee.invalid',INHABITANT_MODEL:'inhabitant-test',INHABITANT_API_KEY:'fake-inhabitant-key',INHABITANT_API_URL:'https://inhabitant.invalid'},fetchImpl:async(url,options)=>{requests.push({url,...options,body:JSON.parse(options.body)});return {ok:true,json:async()=>typeof answer==='function'?answer():{output_text:JSON.stringify(answer)}};}});}
 
 test('inhabitant requests reject prompts, tools, role changes, full worlds and hidden entity properties',()=>{
@@ -14,7 +14,7 @@ test('inhabitant requests reject prompts, tools, role changes, full worlds and h
 });
 test('intentions cannot impersonate another agent, inject state changes, votes or target unseen objects',()=>{
  for(const extra of [{actor:2},{delta:{health:99}},{observer:true},{approve:true},{transactions:[]},{tools:[{name:'shell'}]}])assert.throws(()=>Inhabitant.intention({...attempt,...extra},request().view),/intention/);
- assert.throws(()=>Inhabitant.intention({...attempt,targetEntityIds:['hidden']},request().view),/unknown object/);
+ assert.throws(()=>Inhabitant.intention({...attempt,execution:{kind:'attempt'},speech:null,targetEntityIds:['hidden']},request().view),/unknown object/);
  const r=request();assert.throws(()=>Inhabitant.response(r,{actor:2,operation:'intention',intention:attempt}),/identity/);
  assert.throws(()=>Inhabitant.response(r,{actor:1,operation:'dialogue',text:'I see trees.'}),/response/);
 });
@@ -53,7 +53,7 @@ test('referee output preserves incomplete-provider metadata even when no text wa
 
 test('day-one target IDs are constrained to an empty array, with bounded correction against the same view',async()=>{
  const req=request();req.view.day=1;req.view.entities=[];req.view.experiences=[];const calls=[];let n=0;
- const r=await runtime(()=>({output_text:JSON.stringify({action:'Inspect the forest ground',targetEntityIds:n++===0?['forest']:[]})}),calls).inhabitant(req);
+ const r=await runtime(()=>({output_text:JSON.stringify({action:'Inspect the forest ground',execution:{kind:'attempt'},speech:null,targetEntityIds:n++===0?['forest']:[]})}),calls).inhabitant(req);
  assert.deepEqual(r.intention.targetEntityIds,[]);assert.equal(calls.length,2);assert.equal(calls[0].body.text.format.schema.properties.targetEntityIds.maxItems,0);assert.deepEqual(JSON.parse(calls[0].body.input),JSON.parse(calls[1].body.input));assert.match(calls[1].body.instructions,/UNKNOWN_OBJECT_TARGET/);assert.match(calls[1].body.instructions,/SAME personal view/);assert.equal(r.inferenceDiagnostics[0].code,'UNKNOWN_OBJECT_TARGET');assert.match(r.inferenceDiagnostics[0].responseText,/forest/);assert.ok(calls.every(c=>c.body.tools.length===0&&c.body.tool_choice==='none'));
  assert.deepEqual(Inhabitant.response(req,r).intention.targetEntityIds,[]);
 });
@@ -61,7 +61,7 @@ test('known object targets are enumerated without exposing unknown world objects
  const calls=[];await runtime(attempt,calls).inhabitant(request());assert.deepEqual(calls[0].body.text.format.schema.properties.targetEntityIds.items.enum,['seen']);
 });
 test('repeated invalid targets fail after three attempts with rejected-output diagnostics and no invented target',async()=>{
- const calls=[];await assert.rejects(runtime({...attempt,targetEntityIds:['not-observed']},calls).inhabitant(request()),error=>{assert.equal(error.code,'UNKNOWN_OBJECT_TARGET');assert.equal(error.inferenceDiagnostics.length,3);assert.ok(error.inferenceDiagnostics.every(d=>d.responseText.includes('not-observed')));return true;});assert.equal(calls.length,3);
+ const calls=[];await assert.rejects(runtime({...attempt,execution:{kind:'attempt'},speech:null,targetEntityIds:['not-observed']},calls).inhabitant(request()),error=>{assert.equal(error.code,'UNKNOWN_OBJECT_TARGET');assert.equal(error.inferenceDiagnostics.length,3);assert.ok(error.inferenceDiagnostics.every(d=>d.responseText.includes('not-observed')));return true;});assert.equal(calls.length,3);
 });
 test('correction does not retry tool requests, privilege injection or transport failures',async()=>{
  const calls=[];await assert.rejects(runtime({...attempt,observer:true},calls).inhabitant(request()),/unsupported intention/);assert.equal(calls.length,1);
@@ -70,4 +70,9 @@ test('correction does not retry tool requests, privilege injection or transport 
 test('truncated and malformed intention JSON are corrected without changing evidence',async()=>{
  const calls=[];let n=0;const r=await runtime(()=>{n++;return n===1?{status:'incomplete',output_text:'{"action":'}:n===2?{output_text:'{bad JSON'}:{output_text:JSON.stringify(attempt)};},calls).inhabitant(request());assert.equal(calls.length,3);assert.deepEqual(r.intention,attempt);assert.deepEqual(r.inferenceDiagnostics.map(d=>d.code),['INHABITANT_OUTPUT_INCOMPLETE','INHABITANT_JSON_INVALID']);assert.ok(calls.every(c=>c.body.input===calls[0].body.input));
 });
-test('copied action placeholders are corrected instead of being treated as agent choices',async()=>{const calls=[];let n=0;const r=await runtime(()=>({output_text:JSON.stringify({action:n++===0?'specific attempt':'Inspect the texture of the ground',targetEntityIds:[]})}),calls).inhabitant(request());assert.equal(calls.length,2);assert.equal(r.intention.action,'Inspect the texture of the ground');assert.equal(r.inferenceDiagnostics[0].code,'INTENTION_PLACEHOLDER');});
+test('copied action placeholders are corrected instead of being treated as agent choices',async()=>{const calls=[];let n=0;const r=await runtime(()=>({output_text:JSON.stringify({action:n++===0?'specific attempt':'Inspect the texture of the ground',execution:{kind:'attempt'},speech:null,targetEntityIds:[]})}),calls).inhabitant(request());assert.equal(calls.length,2);assert.equal(r.intention.action,'Inspect the texture of the ground');assert.equal(r.inferenceDiagnostics[0].code,'INTENTION_PLACEHOLDER');});
+
+test('missing execution and actual speech fields are repaired instead of becoming another prose-only intention',async()=>{
+ const calls=[];let n=0;const result=await runtime(()=>({output_text:JSON.stringify(n++===0?{action:'I will walk over and say hello',targetEntityIds:[]}:{action:'Say hello while waiting',execution:{kind:'wait'},speech:'Hello.',targetEntityIds:[]})}),calls).inhabitant(request());
+ assert.equal(calls.length,2);assert.equal(result.intention.execution.kind,'wait');assert.equal(result.intention.speech,'Hello.');assert.equal(result.inferenceDiagnostics[0].code,'INTENTION_EXECUTION_MISSING');assert.equal(calls[0].body.input,calls[1].body.input);
+});

@@ -43,7 +43,8 @@ function apply(before,next,intentions){
   const from=next.agents.find(a=>a.id===i.actor),to=next.agents.find(a=>a.id===m.to);if(!from?.alive||!to?.alive||Math.abs(from.x-to.x)+Math.abs(from.y-to.y)>2)continue;
   const entry={...copy(m),from:from.id,day:next.day,id:next.day+':'+from.id+':'+(next.events.length)};
   to.continuity=to.continuity||view(to);to.continuity.inbox.push(entry);to.continuity.inbox=to.continuity.inbox.slice(-40);
-  next.events.push({day:next.day,type:'speech',who:from.name,text:m.text,to:to.id,communicationKind:m.kind});
+  (root.Knowledge||(typeof require==='function'?require('./knowledge.js'):null))?.hear(next,from.id,m.text);
+  next.events.push({day:next.day,type:'speech',who:from.name,text:m.text,to:to.id,communicationKind:m.kind,agentAuthored:true});
  }
 }
 root.Continuity={validate,view,apply};if(typeof module!=='undefined')module.exports=root.Continuity;

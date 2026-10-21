@@ -70,6 +70,7 @@
   const current=find(a,'place',place(state,a)),body=find(a,'body','self'),people=find(a,'people','nearby');
   return {continuity:(root.Continuity||(typeof require==='function'?require('./continuity.js'):null)).view(a,state.day),day:state.day,name:a.name,condition:copy(body?.value.condition||{health:0,energy:0,nourishment:0,hydration:0}),position:{x:a.x,y:a.y},visibleGround:current?project(current):{tile:place(state,a),type:'unknown ground'},nearbyPeople:copy(people?.value||[]),knownPlaces:pick('place').map(project),entities,experiences:facts.filter(r=>r.subject==='experience').slice(-14).map(r=>({day:r.day,text:r.value.text,evidence:evidence(r,state,a)})),discoveries:pick('discovery').map(project),goal:a.goal?{title:a.goal.title,reason:a.goal.reason,next:a.goal.next}:null,states:copy(body?.value.states||[]),traits:copy(a.genes||{}),reports:facts.filter(r=>r.kind==='hearsay'&&r.subject!=='experience').slice(-10).map(r=>({subject:r.subject,subjectId:r.subjectId,value:copy(r.value),evidence:evidence(r,state,a)})),inferences:facts.filter(r=>r.kind==='inference').slice(-10).map(r=>({claim:r.value.claim,evidenceIds:copy(r.value.evidenceIds),evidence:evidence(r,state,a)}))};
  }
+ function recordExperience(state,actor,text){initialize(state);const a=state.agents.find(a=>a.id===actor);if(a)put(a,state,{subject:'experience',subjectId:'result:'+state.day+':'+actor,kind:'observation',value:{text}});}
  function hear(state,actor,text){
   initialize(state);const from=state.agents.find(a=>a.id===actor);if(!from?.alive)return;
   for(const a of state.agents)if(a.id!==actor&&nearby(from,a))put(a,state,{subject:'experience',subjectId:'speech:'+state.day+':'+actor+':'+a.perceptionMemory.nextId,kind:'hearsay',observedDay:state.day,sourceActor:actor,sourceName:from.name,value:{text:'I heard '+from.name+' say: '+text}});
@@ -99,7 +100,7 @@
    }
   }
   for(const c of p.agents||[])if(c.experience){const a=next.agents.find(a=>a.id===c.id);put(a,next,{subject:'experience',subjectId:'outcome:'+next.day,value:{text:c.experience},reason:'Referee-resolved personal experience.'});}
-  for(const s of p.speech||[]){person(s.actor);hear(next,s.actor,s.text);}
+  for(const s of p.speech||[])if(next.agents.find(a=>a.id===s.actor)?.alive)hear(next,s.actor,s.text);
   for(const report of p.reports||[]){const from=person(report.from),to=person(report.to),speech=p.speech?.[report.speech];
    if(from.id===to.id||!nearby(from,to)||!Number.isInteger(report.speech)||!speech||speech.actor!==from.id)fail('a report requires an actual audible statement by its source.');
    if(!['entity','place','discovery'].includes(report.subject))fail('unsupported report subject.');
@@ -115,6 +116,6 @@
   }
   return new Map(next.agents.map(a=>[a.id,a.perceptionMemory]));
  }
- root.Knowledge={initialize,refresh,perception,resolve,remap,hear};
+ root.Knowledge={initialize,refresh,perception,resolve,remap,hear,recordExperience};
  if(typeof module!=='undefined')module.exports=root.Knowledge;
 })(typeof window!=='undefined'?window:globalThis);

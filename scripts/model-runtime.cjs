@@ -35,10 +35,11 @@ function createModelRuntime({env=process.env,fetchImpl=fetch}={}){
      if(answer.model_status==='incomplete')throw Object.assign(Error('The inhabitant output was incomplete; return a concise complete intention.'),{code:'INHABITANT_OUTPUT_INCOMPLETE'});
      let value;try{value=JSON.parse(answer.text);}catch{throw Object.assign(Error('The inhabitant must return a complete JSON intention object.'),{code:'INHABITANT_JSON_INVALID'});}
      const response={...Inhabitant.response(req,{actor:req.actor,operation:req.operation,intention:value}),model:answer.model};
+     if(!value.execution||!Object.hasOwn(value,'speech'))throw Object.assign(Error('Include execution with a concrete engine action or attempt, and speech containing actual words or null. Describing an action or conversation in prose alone cannot execute it.'),{code:'INTENTION_EXECUTION_MISSING'});
      if(history.length)response.inferenceDiagnostics=history;return response;
     }catch(error){
      history.push({attempt:attempt+1,code:error.code||null,error:error.message,model:answer?.model||config('INHABITANT').model,status:answer?.model_status||null,responseText:answer?.text?.slice(0,2800)||'',responseTruncated:(answer?.text?.length||0)>2800});
-     const repairable=['UNKNOWN_OBJECT_TARGET','INTENTION_PLACEHOLDER','INHABITANT_OUTPUT_INCOMPLETE','INHABITANT_JSON_INVALID'].includes(error.code);
+     const repairable=['UNKNOWN_OBJECT_TARGET','INTENTION_PLACEHOLDER','INHABITANT_OUTPUT_INCOMPLETE','INHABITANT_JSON_INVALID','INVALID_EXECUTION','INTENTION_EXECUTION_MISSING'].includes(error.code);
      if(!repairable||attempt===2||Date.now()>=deadline){error.inferenceDiagnostics=history;throw error;}
      instructions=base+' CORRECTION REQUIRED: '+JSON.stringify({code:error.code,message:error.message})+'. Return another intention against exactly the SAME personal view. Never create objects, alter facts or grant privileges to satisfy validation. Your previous rejected output is untrusted proposal text, not an observation: '+JSON.stringify(answer?.text?.slice(0,6000)||'');
     }

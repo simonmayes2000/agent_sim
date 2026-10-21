@@ -58,7 +58,7 @@ const assert=require('node:assert/strict');
     await page.click('[data-panel="stories"]');
     await page.click('#step-btn');await page.waitForFunction(()=>document.querySelector('#day-count').textContent==='03'&&!document.querySelector('#step-btn').disabled);
     world=await read();assert.equal(world.agents[0].food,7);assert.equal(world.agents[0].health,85);assert.equal(world.agents[0].worldStates[0].name,'stomach discomfort');assert.deepEqual(world.agents[0].knowledge,['folded-effect']);
-    assert.equal(await page.locator('.entity-structure').count(),1);assert.equal(world.council.decisions.at(-1).votes.length,10);
+    assert.equal(await page.locator('.entity-structure').count(),1);assert.deepEqual(world.council.decisions.at(-1).votes.map(v=>v.name),seen.filter(p=>p.facts).at(-1).facts.reviewers);
     const beforeEntities=JSON.stringify(world.openWorld.entities.map(({observations,knowledge,knownBy,...physical})=>physical));
     veto=true;await page.click('#step-btn');await page.waitForFunction(()=>!document.querySelector('#step-btn').disabled&&document.querySelector('#day-count').textContent==='04');
     world=await read();assert.equal(JSON.stringify(world.openWorld.entities.map(({observations,knowledge,knownBy,...physical})=>physical)),beforeEntities);assert.equal(world.agents[0].health,83);assert.equal(world.agents[0].food,6);assert.equal(world.openWorld.scheduledEffects.length,0);assert.equal(world.openWorld.lastResolution.proposalWithheld,true);assert.equal(world.council.decisions.at(-1).approved,false);

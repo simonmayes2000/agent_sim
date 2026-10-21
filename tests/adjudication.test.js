@@ -36,7 +36,7 @@ test('a concrete veto triggers a corrected outcome against the same intentions a
  assert.equal(r.revision,1);assert.equal(prompts.length,2);assert.match(prompts[1],/stated cause is unsupported/);assert.deepEqual(reviews[0].intentions,reviews[1].intentions);assert.deepEqual(reviews[0].before,reviews[1].before);assert.equal(s.day,4);
 });
 test('an unavailable reviewer is not treated as a semantic veto or an excuse to fabricate approval',async()=>{
- let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;return {summary:'An ordinary day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>allow().map((v,i)=>i===0?{...v,approve:false,reason:'Model unavailable: offline'}:v)}),/reviewer is unavailable/);assert.equal(calls,1);
+ let calls=0;await assert.rejects(()=>Adjudication.resolve(fixture(),intentions,null,{askAuthor:async()=>{calls++;return {summary:'An ordinary day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>allow().map((v,i)=>v.name==='Causality'?{...v,approve:false,reason:'Model unavailable: offline'}:v)}),/reviewer is unavailable/);assert.equal(calls,1);
 });
 test('invalid data is repaired with a specific error and cannot reach the council before validation',async()=>{
  const s=fixture();let calls=0,reviews=0;const prompts=[];await Adjudication.resolve(s,intentions,null,{askAuthor:async prompt=>{prompts.push(prompt);return ++calls===1?'{malformed':{summary:'A corrected day.',agents:[{id:1,experience:'I inspect the ground.'}]};},askCouncil:async()=>{reviews++;return allow();}});assert.equal(calls,2);assert.equal(reviews,1);assert.match(prompts[1],/CORRECTION REQUIRED/);assert.equal(s.day,4);
@@ -67,5 +67,5 @@ test('partial provider output is treated as repairable data, not as a committed 
 });
 
 test('mixed formatting failures and vetoes have an overall budget without freezing an engine-only day',async()=>{
- let calls=0;const r=await Adjudication.resolve(fixture(),intentions,null,{maxAuthorCalls:2,askAuthor:async()=>++calls===1?'{bad':{summary:'A questionable event.',agents:[{id:1,experience:'An unsupported observation.'}]},askCouncil:async()=>allow().map((v,i)=>i===0?{...v,approve:false,reason:'A concrete unresolved contradiction.'}:v)});assert.equal(calls,2);assert.equal(r.mode,'engine-only');assert.ok(!r.outcome.agents);
+ let calls=0;const r=await Adjudication.resolve(fixture(),intentions,null,{maxAuthorCalls:2,askAuthor:async()=>++calls===1?'{bad':{summary:'A questionable event.',agents:[{id:1,experience:'An unsupported observation.'}]},askCouncil:async()=>allow().map((v,i)=>v.name==='Causality'?{...v,approve:false,reason:'A concrete unresolved contradiction.'}:v)});assert.equal(calls,2);assert.equal(r.mode,'engine-only');assert.ok(!r.outcome.agents);
 });

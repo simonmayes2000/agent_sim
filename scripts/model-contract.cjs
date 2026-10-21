@@ -1,8 +1,8 @@
 /* Schema guidance is separate from authoritative state validation. */
 const object={type:'object',additionalProperties:true};
 const array=items=>({type:'array',items});
-const intention={type:'object',additionalProperties:true,required:['action'],properties:{
- action:{type:'string'},reason:{type:'string'},goal:{type:'object',additionalProperties:false,required:['title','reason','next'],properties:{title:{type:'string'},reason:{type:'string'},next:{type:'string'}}},targetEntityIds:array({type:'string'}),destination:{anyOf:[{type:'null'},{type:'object',additionalProperties:false,required:['x','y'],properties:{x:{type:'integer'},y:{type:'integer'}}}]}
+const intention={type:'object',additionalProperties:true,required:['action','execution','speech'],properties:{
+ execution:{type:'object',additionalProperties:false,required:['kind'],properties:{kind:{type:'string',enum:['move','rest','inspect','consume','wait','attempt']},entity:{type:'string'},amount:{type:'number'}}},speech:{anyOf:[{type:'string'},{type:'null'}]},action:{type:'string'},reason:{type:'string'},goal:{type:'object',additionalProperties:false,required:['title','reason','next'],properties:{title:{type:'string'},reason:{type:'string'},next:{type:'string'}}},targetEntityIds:array({type:'string'}),destination:{anyOf:[{type:'null'},{type:'object',additionalProperties:false,required:['x','y'],properties:{x:{type:'integer'},y:{type:'integer'}}}]}
 }};
 // Extensible world changes stay JSON data. The stable process envelope is fully strict.
 const outcome={type:'object',additionalProperties:false,required:['summary','processes','changesJson'],properties:{
