@@ -160,3 +160,11 @@ The **Archive** control opens an IndexedDB archive of immutable checkpoints. Eac
 - **Export complete archive** and **Import world or archive** support portable versioned bundles with corruption checks, plus the existing plain world export. Invalid input is rejected before replacing the current world. Imported worlds become branches. Save an external export for a backup independent of browser storage.
 
 This is durable browser persistence, not server authority or multi-device synchronization. Browser-data deletion, browser eviction and device loss can remove local archives. Checksums detect accidental corruption; they are not cryptographic signatures or protection against the browser owner. Changing engine versions can invalidate a historical replay; saved checkpoints remain inspectable. No deployment is performed automatically.
+
+### Reporting a stalled day
+
+Click **Download bug report** in the header (also shown beside a stalled-day status), then attach the downloaded `first-world-bug-day-….json` file when reporting the problem. Download it before clearing browser data or repeatedly retrying. The button also works while a request is still waiting. You do not need the browser console.
+
+The observer-only log records attempt IDs and timestamps, phases, the initial world snapshot, chosen intentions, author prompts/responses, validation errors and stacks/codes, repair/revision numbers, all referee votes/reasons, HTTP statuses and elapsed times, provider completion/truncation metadata, cancellation, and whether a day committed. The export includes the current world and available backend revision from `/health`. Existing errors/current state can be exported immediately, but detailed tracing begins with attempts made on the logging-enabled version.
+
+Diagnostics are stored separately from agent context and world saves, survive reloads, and retain up to four recent attempts within a 2 MB browser-storage budget. Oversized entries are marked as truncated; the exported current world is complete. Storage failure keeps the in-memory report downloadable. Reports contain simulation history and model text; credentials and authorization headers are not recorded, and recognized secret fields/key patterns are redacted. Nothing is uploaded automatically.
