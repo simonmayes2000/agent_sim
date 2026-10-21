@@ -26,7 +26,8 @@ const assert=require('node:assert/strict');
     let slow=true,release;
     const waiting=new Promise(resolve=>release=resolve),prompts=[];
     await page.route('**/api/council',route=>route.fulfill({json:{votes:roles.map(name=>({name,approve:true,reason:'The proposed action is physically possible.'}))}}));
-    await page.route('**/api/agent',async route=>{
+    await page.route('**/api/inhabitant',async route=>{const body=route.request().postDataJSON();prompts.push(body);if(slow)await waiting;await route.fulfill({json:{actor:body.actor,operation:body.operation,text:'I see trees.'}}).catch(()=>{});});
+    await page.route('**/api/referee',async route=>{
       const body=route.request().postDataJSON();prompts.push(body);
       if(slow)await waiting;
       let text='I see trees.';

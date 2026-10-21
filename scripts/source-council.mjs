@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* Run locally: serve the game, let ten referees amend source, test, and commit. */
+/* Serve live tool-free inference; source review remains a separate manual workflow. */
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,7 +10,7 @@ import {runModelCouncil} from './model-source-council.mjs';
 import {createLocalAgentApi} from './local-agent-api.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),dist=path.join(root,'dist'),ruleFile=path.join(dist,'realism-rules.js'),auditFile=path.join(root,'work','source-council.jsonl');
 const args=process.argv.slice(2),port=Number(args[args.indexOf('--port')+1])||8000,push=args.includes('--push'),mode=args[args.indexOf('--agents')+1]==='codex'?'codex':'procedural';let lastReviewedDay=0,server;
-const localApi=createLocalAgentApi({root,mode});
+const localApi=createLocalAgentApi();
 function git(...a){return spawnSync('git',a,{cwd:root,encoding:'utf8',timeout:30000})}
 function record(entry){fs.mkdirSync(path.dirname(auditFile),{recursive:true});fs.appendFileSync(auditFile,JSON.stringify(entry)+'\n')}
 function outcome(world){
@@ -32,12 +32,12 @@ function serve(req,res){let pathname;try{pathname=decodeURIComponent(new URL(req
   res.writeHead(202,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify({ok:true,restarting:true}));
   server.close(()=>{const child=spawn(process.execPath,process.argv.slice(1),{cwd:root,detached:true,stdio:'ignore',env:process.env});child.unref();process.exit(0)});return;
  }
- if(pathname==='/config.js'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'no-store'});return res.end('window.AGENT_API_URL="/api/agent";')}
- if((pathname==='/api/agent'||pathname==='/api/council')&&req.method==='POST'){
+ if(pathname==='/config.js'&&req.method==='GET'){res.writeHead(200,{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'no-store'});return res.end('window.REFEREE_API_URL="/api/referee";window.INHABITANT_API_URL="/api/inhabitant";window.AGENT_API_URL=window.REFEREE_API_URL;')}
+ if(['/api/agent','/api/referee','/api/inhabitant','/api/council'].includes(pathname)&&req.method==='POST'){
   const expected=`http://127.0.0.1:${port}`;
   if(req.headers.origin&&req.headers.origin!==expected)return json(res,403,{error:'Only the local game may call local agents.'});
   if(!String(req.headers['content-type']||'').startsWith('application/json'))return json(res,415,{error:'A JSON request is required.'});
-  let bytes=0,body='';req.on('data',part=>{bytes+=part.length;if(bytes>100000)req.destroy();else body+=part});req.on('end',async()=>{try{json(res,200,await localApi(pathname.slice(5),JSON.parse(body)))}catch(error){json(res,503,{error:error.message||'Local agents are unavailable.'})}});return;
+  let bytes=0,body='';req.on('data',part=>{bytes+=part.length;if(bytes>2000000)req.destroy();else body+=part});req.on('end',async()=>{try{json(res,200,await localApi(pathname.slice(5),JSON.parse(body)))}catch(error){json(res,503,{error:error.message||'Local agents are unavailable.'})}});return;
  }
  if(pathname==='/__source-council/status'&&req.method==='GET')return json(res,200,{connected:true,mode,rules:parseSource(fs.readFileSync(ruleFile,'utf8')),history:recent()});
  if(pathname==='/__source-council/observe'&&req.method==='POST'){

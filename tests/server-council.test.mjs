@@ -37,6 +37,8 @@ test('one browser request collects ten separate model referee votes',async()=>{
     assert.equal(data.votes.find(v=>v.name==='Social').approve,false);
     const outcome=await fetch(`http://127.0.0.1:${port}/api/council`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({facts:{kind:'edict',mode:'open-world',day:3,proposal:{summary:'An unfamiliar morsel nourishes but causes discomfort.'}}})});
     assert.equal(outcome.status,200);assert.ok(requests.slice(-10).every(r=>r.input.includes('PROPOSED ACTUAL OUTCOME')));
+    const largeFacts={kind:'edict',mode:'open-world',proposal:{summary:'A day with full evidence.'},before:{tiles:Array.from({length:80},(_,i)=>({i,type:'ground',description:'Evidence '+i+' '+('x'.repeat(1000))}))},after:{day:4},observerRequest:null};
+    const complete=await fetch(`http://127.0.0.1:${port}/api/council`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({facts:largeFacts})});assert.equal(complete.status,200);assert.ok(requests.slice(-10).every(r=>r.input.includes('Evidence 0 ')&&r.input.includes('Evidence 79 ')));
     const author=await fetch(`http://127.0.0.1:${port}/api/agent`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({purpose:'world-resolution',prompt:'Author a compact open-world outcome.',max_output_tokens:5000})});
     assert.equal(author.status,200);assert.equal(requests.at(-1).max_output_tokens,5000);
   }finally{
