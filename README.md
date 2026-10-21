@@ -171,3 +171,10 @@ Diagnostics are stored separately from agent context and world saves, survive re
 
 
 Day-one intention validation constrains `targetEntityIds` to the private view’s actual object IDs; when no objects are known, the schema permits only an empty array. Terrain, people and exploratory searches are expressed in action text rather than fabricated object IDs. Unknown-target, incomplete and malformed-JSON responses receive at most two corrections against the identical private context, within a 50-second inference budget. Tool calls, privilege injection and transport failures remain terminal. Rejected model outputs and validation codes are returned as diagnostic metadata, never as observations or world changes.
+
+
+### Outcome contract and repeated process validation failures
+
+The model provider receives a strict envelope with `summary`, `processes`, and `changesJson`. The process item schema comes directly from `ProcessClock.schema`: all records require identity, description, status, subject IDs, a causal review and a review interval. The server decodes the flexible JSON change payload into the existing outcome format before engine validation; arbitrary properties, materials and mechanisms remain supported. Malformed payloads are explicit repairable failures, never silently converted into a quiet day. Backend health reports the contract version. The nano outcome author uses low reasoning effort; inhabitants and specialist votes retain minimal effort.
+
+Legacy process records that omit only `subjects` are recorded as unscoped (`[]`) with a bookkeeping correction; no person or physical effect is inferred. Wrong subject types/IDs, missing causal reviews and forgotten due processes still fail validation. The author is asked for minimal actual changes and no routine observation/day-clock processes. Regression fixtures retain the three real rejected outcomes from the day-one report, including the fabricated stock and missing-review errors that must still be rejected. Cached literal example actions are regenerated rather than re-used as meaningful intentions.

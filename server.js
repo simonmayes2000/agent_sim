@@ -54,7 +54,7 @@ function inference(req,res,inhabitant=false){
 
 http.createServer((req, res) => {
   if (req.method === 'OPTIONS') return send(res, 204, {});
-  if (req.method === 'GET' && req.url === '/health') return send(res, 200, {ok: true, configured: runtime.configured('REFEREE'), inhabitantsConfigured:runtime.configured('INHABITANT'), revision: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null});
+  if (req.method === 'GET' && req.url === '/health') return send(res, 200, {ok: true, configured: runtime.configured('REFEREE'), inhabitantsConfigured:runtime.configured('INHABITANT'), contracts:{inhabitant:2,outcome:'strict-process-envelope-v1'}, revision: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null});
   if (req.method === 'POST' && req.url === '/api/inhabitant') return inference(req,res,true);
   if (req.method === 'POST' && ['/api/referee','/api/agent'].includes(req.url)) return inference(req,res);
   if (req.method === 'POST' && req.url === '/api/council') return council(req,res);

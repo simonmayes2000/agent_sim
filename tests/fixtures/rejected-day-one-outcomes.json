@@ -1,0 +1,486 @@
+[
+  {
+    "attempt": "frhcpo1m9is",
+    "proposal": {
+      "summary": "Adam and Eve perform cautious surrounding assessment, establishing proximity interaction and basic energy/food accounting; no new entities or structures appear; no discoveries.",
+      "expand": {
+        "west": 0,
+        "east": 0,
+        "north": 0,
+        "south": 0
+      },
+      "entities": [
+        {
+          "op": "create",
+          "id": "entity-day2-encounter-1",
+          "name": "dust-scent",
+          "description": "fine particulate scent carried by grass air, perceptible to nearby agents",
+          "tile": 16,
+          "quantity": 1,
+          "kind": "natural-phenomenon",
+          "structure": false,
+          "properties": {
+            "massPerUnit": 1,
+            "nourishment": 0,
+            "hydration": 0
+          },
+          "knownBy": [
+            1,
+            2
+          ],
+          "knowledge": {
+            "1": {
+              "only learned properties": "dust-scent is a transient atmospheric cue"
+            }
+          },
+          "carriedBy": null,
+          "appearance": {
+            "color": "#C8B29E",
+            "shape": "mist-like",
+            "footprint": [
+              [
+                0.1,
+                0.1
+              ],
+              [
+                0.9,
+                0.2
+              ],
+              [
+                0.8,
+                0.8
+              ],
+              [
+                0.2,
+                0.9
+              ]
+            ],
+            "scale": 0.4
+          }
+        }
+      ],
+      "agents": [
+        {
+          "id": 1,
+          "delta": {
+            "health": 0,
+            "energy": -1,
+            "food": 0,
+            "water": 0
+          },
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "states": [
+            {
+              "name": "scanning",
+              "description": "Adam surveys the area for Eve and potential threats; energy expenditure modest; duration 1 unit"
+            }
+          ],
+          "experience": "Adam perceives Eve nearby on tile 17 grass; notices grass textures and air movement; maintains distance",
+          "goal": {
+            "status": "active",
+            "progress": 20,
+            "next": "continue passive observation or approach if safe"
+          }
+        },
+        {
+          "id": 2,
+          "delta": {
+            "health": 0,
+            "energy": -1,
+            "food": 0,
+            "water": 0
+          },
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "states": [
+            {
+              "name": "observing",
+              "description": "Eve surveys surroundings; energy expenditure modest; duration 1 unit"
+            }
+          ],
+          "experience": "Eve notes Adam on tile 16 grass; assesses terrain and potential paths; keeps to edge of visibility",
+          "goal": {
+            "status": "active",
+            "progress": 15,
+            "next": "decide to approach or continue observation"
+          }
+        }
+      ],
+      "discoveries": [],
+      "terrain": [
+        {
+          "tile": 16,
+          "type": "grass",
+          "description": "grassy ground with light breeze",
+          "color": "#88C070"
+        }
+      ],
+      "laws": [],
+      "processes": [
+        {
+          "id": "process-day2-01",
+          "description": "Situational assessment by Adam and Eve",
+          "status": "active",
+          "review": "Adam and Eve completed initial observation; no direct action taken",
+          "nextReviewDay": 2,
+          "reviewInDays": 1
+        }
+      ],
+      "speech": [
+        {
+          "actor": 1,
+          "text": "I sense Eve nearby; I will keep to the edge and observe for a moment."
+        },
+        {
+          "actor": 2,
+          "text": "Adam is in view. I will monitor his approach distance before deciding to move."
+        }
+      ],
+      "newPeople": [],
+      "weather": {
+        "name": "clear",
+        "description": "no precipitation; light breeze"
+      },
+      "visual": {
+        "title": "Adam and Eve on grass tile",
+        "rationale": "positions and terrain observed",
+        "palette": {
+          "grass": "#88C070",
+          "sky": "#87CEEB"
+        },
+        "atmosphere": {
+          "humidity": "normal",
+          "light": "bright"
+        },
+        "regions": [],
+        "marks": []
+      }
+    }
+  },
+  {
+    "attempt": "vic23bi9ryc",
+    "proposal": {
+      "summary": "Adam and Eve perform exploratory, near-term social and environmental checks in day 1; no edible encounter yet; no movement beyond current tiles unless required by travel budget.",
+      "expand": {
+        "west": 0,
+        "east": 0,
+        "north": 0,
+        "south": 0
+      },
+      "entities": [],
+      "agents": [
+        {
+          "id": 1,
+          "delta": {
+            "health": 0,
+            "energy": 0,
+            "food": 0,
+            "water": 0
+          },
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "states": [],
+          "experience": "Adam observes Eve on neighboring grass tile; notes presence and terrain type; remains cautious and maintains current energy.",
+          "goal": {
+            "status": "active",
+            "progress": 20,
+            "next": "continue situational assessment and decide whether to approach Eve or keep distance"
+          }
+        },
+        {
+          "id": 2,
+          "delta": {
+            "health": 0,
+            "energy": 0,
+            "food": 0,
+            "water": 0
+          },
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "states": [],
+          "experience": "Eve surveys surroundings and social context; aware of Adam nearby; ready to adjust stance (approach or observe) based on perceived risk and energy.",
+          "goal": {
+            "status": "active",
+            "progress": 20,
+            "next": "decide whether to approach Adam or remain observing from Grass tile"
+          }
+        }
+      ],
+      "discoveries": [],
+      "terrain": [
+        {
+          "tile": 16,
+          "type": "grass",
+          "description": "grassy ground with mild slope to the east; open sight between Adam (tile16) and Eve (tile17)",
+          "color": "#88AA44",
+          "properties": {}
+        }
+      ],
+      "laws": [],
+      "processes": [
+        {
+          "id": "process-day1-review",
+          "description": "Day 1 micro-causality check: no actions yet beyond sensing; no material transfers; social proximity established",
+          "status": "active",
+          "reviewInDays": 1,
+          "subjects": [
+            1,
+            2
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "from": 1,
+          "to": 2,
+          "change": -5,
+          "reason": "mutual observation creates cautious distance; potential for future approach"
+        }
+      ],
+      "speech": [
+        {
+          "actor": 1,
+          "text": "observes Eve from a safe distance; notes terrain and distance to Eve."
+        },
+        {
+          "actor": 2,
+          "text": "surveys Adam and the grass tile; evaluates approach risk."
+        }
+      ],
+      "newPeople": [],
+      "weather": {
+        "name": "clear",
+        "description": "bright with no precipitation; visibility good"
+      },
+      "visual": {
+        "title": "Adam and Eve on adjacent grass tiles",
+        "rationale": "two entities observe each other across a small gap",
+        "palette": {
+          "foreground": "#4A6F2F"
+        },
+        "regions": [],
+        "marks": [
+          {
+            "tile": 16,
+            "note": "Adam on grass tile 16"
+          }
+        ]
+      },
+      "observations": [
+        {
+          "actor": 1,
+          "entity": "adam",
+          "properties": {
+            "taste": "none"
+          },
+          "reason": "baseline observation; no food encountered"
+        }
+      ],
+      "reports": [],
+      "inferences": [
+        {
+          "actor": 1,
+          "claim": "Eve is nearby and attentive; potential for social interaction if energy remains stable",
+          "evidenceIds": [
+            "1:inspection1"
+          ]
+        }
+      ],
+      "transactions": [],
+      "reserveTransfers": [],
+      "scheduledEffects": [
+        {
+          "id": "effect-2-day1-wake",
+          "actor": 1,
+          "dueDay": 2,
+          "delta": {
+            "health": 0
+          },
+          "reason": "no immediate health impact from observation"
+        }
+      ],
+      "day": 2
+    }
+  },
+  {
+    "attempt": "e8foghwauqj",
+    "proposal": {
+      "summary": "Adam and Eve observe surroundings; no new food discovered; minor social interaction potential; day 2 will proceed with fatigue/consumption tick.",
+      "expand": {
+        "west": 0,
+        "east": 0,
+        "north": 0,
+        "south": 0
+      },
+      "entities": [],
+      "agents": [
+        {
+          "id": 1,
+          "delta": {
+            "health": 0,
+            "energy": 0,
+            "food": 0,
+            "water": 0
+          },
+          "position": {
+            "x": 0,
+            "y": 2
+          },
+          "states": [
+            {
+              "name": "surveillance",
+              "description": "Adam maintains distance while surveying surroundings; energy for this day conserved; no direct contact yet."
+            }
+          ],
+          "experience": "Adam observes Eve at tile 16 grass; notes presence and proximity to Eve (tile 17).",
+          "goal": {
+            "status": "active",
+            "progress": 20,
+            "next": "continue cautious observation, possible approach if safe"
+          }
+        },
+        {
+          "id": 2,
+          "delta": {
+            "health": 0,
+            "energy": 0,
+            "food": 0,
+            "water": 0
+          },
+          "position": {
+            "x": 1,
+            "y": 2
+          },
+          "states": [
+            {
+              "name": "watchful",
+              "description": "Eve surveys environment, considers social cues before approaching Adam."
+            }
+          ],
+          "experience": "Eve observes Adam; acknowledges mutual presence but refrains from immediate approach to conserve energy.",
+          "goal": {
+            "status": "active",
+            "progress": 15,
+            "next": "decide whether to move closer or maintain distance"
+          }
+        }
+      ],
+      "discoveries": [],
+      "terrain": [
+        {
+          "tile": 16,
+          "type": "grass",
+          "description": "Adam\u2019s tile: grass, lightly vegetated edge of forest",
+          "color": "#88C070"
+        },
+        {
+          "tile": 17,
+          "type": "grass",
+          "description": "Eve\u2019s tile: grass, similar terrain, open sightlines to Adam",
+          "color": "#8AC070"
+        }
+      ],
+      "laws": [
+        {
+          "id": "world.weather-consumed-day",
+          "description": "Dailies consume minimal energy; no mandatory consumption beyond local observation."
+        }
+      ],
+      "processes": [
+        {
+          "id": "process-1-day2",
+          "review": "No day-1 style stability required; observers noted presence and mutual distance; no causal disruption detected.",
+          "status": "active",
+          "reviewInDays": 1,
+          "nextReviewDay": 2,
+          "description": "Day 2 observational process for social proximity and environment"
+        }
+      ],
+      "relationships": [
+        {
+          "from": 1,
+          "to": 2,
+          "change": 0,
+          "reason": "mutual awareness; no direct interaction yet"
+        }
+      ],
+      "speech": [
+        {
+          "actor": 1,
+          "text": "Adam regards Eve from a cautious distance, no loud noises."
+        },
+        {
+          "actor": 2,
+          "text": "Eve maintains visual contact, assesses Adam\u2019s stance."
+        }
+      ],
+      "newPeople": [],
+      "weather": {
+        "name": "clear",
+        "description": "Overall clear conditions persist; light breeze and stable visibility"
+      },
+      "visual": {
+        "title": "duo in grass tile vicinity",
+        "rationale": "mutual observation indicates cautious social approach",
+        "palette": {
+          "Adam": "#A8C07A",
+          "Eve": "#C1D27A"
+        },
+        "regions": [
+          {
+            "tile": 16,
+            "polygon": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.2,
+                0.0
+              ],
+              [
+                0.2,
+                0.2
+              ],
+              [
+                0.0,
+                0.2
+              ]
+            ]
+          },
+          {
+            "tag": "Eve",
+            "tile": 17,
+            "polygon": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.2,
+                0.0
+              ],
+              [
+                0.2,
+                0.2
+              ],
+              [
+                0.0,
+                0.2
+              ]
+            ]
+          }
+        ]
+      }
+    }
+  }
+]

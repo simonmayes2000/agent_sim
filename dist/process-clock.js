@@ -1,6 +1,7 @@
 /* Review timing is engine bookkeeping. Reviews describe consequences; schedules never apply them twice. */
 (function(root){
  'use strict';
+ const schema={type:'object',additionalProperties:false,required:['id','description','status','subjects','review','reviewInDays'],properties:{id:{type:'string'},description:{type:'string'},status:{type:'string',enum:['active','resolved']},subjects:{type:'array',items:{type:'integer'}},review:{type:'string'},reviewInDays:{type:'integer',minimum:1,maximum:365}}};
  const copy=v=>JSON.parse(JSON.stringify(v));
  const fail=(message,code)=>{const error=Error('Process review: '+message);error.code=code;throw error;};
  function due(state){return (state.openWorld?.processes||[]).filter(p=>p.status==='active'&&(!Number.isInteger(p.nextReviewDay)||p.nextReviewDay<=state.day+1));}
@@ -11,7 +12,8 @@
    if(!change||typeof change.id!=='string'||!change.id.trim()||ids.has(change.id))fail('each review needs a unique process ID.','PROCESS_SHAPE');ids.add(change.id);
    if(typeof change.review!=='string'||!change.review.trim())fail('process '+JSON.stringify(change.id)+' needs a causal review of this day; changing its date alone is not a review.','PROCESS_REVIEW_MISSING');
    const previous=old.find(v=>v.id===change.id),merged={...previous,...change};
-   if(typeof merged.description!=='string'||!merged.description.trim()||!['active','resolved'].includes(merged.status)||!Array.isArray(merged.subjects))fail('a process requires description, active/resolved status, and subjects (person IDs or []).','PROCESS_SHAPE');
+   if(merged.subjects===undefined){merged.subjects=[];p.processCorrections||=[];p.processCorrections.push({id:change.id,field:'subjects',applied:[],reason:'No subject IDs were supplied. This is an unscoped process; no person or physical effect was inferred.'});}
+   if(typeof merged.description!=='string'||!merged.description.trim()||!['active','resolved'].includes(merged.status)||!Array.isArray(merged.subjects))fail('process '+JSON.stringify(change.id)+' requires nonempty description, status active/resolved, and subjects as person IDs or []. Received fields: '+Object.keys(merged).join(', ')+'.','PROCESS_SHAPE');
    for(const id of merged.subjects)if(!state.agents.some(a=>a.id===id))fail('process subjects must identify existing people.','PROCESS_SHAPE');
    if(merged.status==='resolved')return {...merged,lastReviewed:day,nextReviewDay:null,reviewInDays:null};
    let interval=1;
@@ -26,6 +28,6 @@
   else delete p.calendarCorrections;
   return p;
  }
- root.ProcessClock={due,prepare};
+ root.ProcessClock={due,prepare,schema};
  if(typeof module!=='undefined')module.exports=root.ProcessClock;
 })(typeof window!=='undefined'?window:globalThis);
