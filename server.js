@@ -10,7 +10,8 @@ const REFEREES = ['Conservation','Space','Causality','Ecology','Physiology','Kno
 
 function send(res, status, body) {
   if(res.destroyed||res.writableEnded)return;
-  res.writeHead(status, {'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': process.env.GAME_ORIGIN || '*', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS'});
+  const origin=require('./scripts/origin-policy.cjs').allowedOrigin(res.requestOrigin,process.env.GAME_ORIGIN);
+  res.writeHead(status, {'Vary':'Origin',...(origin?{'Access-Control-Allow-Origin':origin}:{}),'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Allow-Methods': 'POST, OPTIONS'});
   res.end(JSON.stringify(body));
 }
 const modelText=(prompt,maxOutputTokens=500,scoped=false,signal=null)=>runtime.refereeText(prompt,maxOutputTokens,scoped,signal);
@@ -59,6 +60,7 @@ function inference(req,res,inhabitant=false){
 }
 
 http.createServer((req, res) => {
+  res.requestOrigin=req.headers.origin;
   if (req.method === 'OPTIONS') return send(res, 204, {});
   if (req.method === 'GET' && req.url === '/health') return send(res, 200, {ok: true, configured: runtime.configured('REFEREE'), inhabitantsConfigured:runtime.configured('INHABITANT'), contracts:{sandbox:1,inhabitant:4,outcome:'strict-process-envelope-v1',reviewPolicy:4}, revision: process.env.RENDER_GIT_COMMIT?.slice(0, 7) || null});
   if(req.method==='POST'&&req.url==='/api/sandbox'){let raw='';const controller=new AbortController();res.on('close',()=>{if(!res.writableEnded)controller.abort();});req.on('data',part=>{raw+=part;if(raw.length>40000)req.destroy();});req.on('end',async()=>{try{send(res,200,await require('./scripts/sandbox-runtime.cjs').sandbox(JSON.parse(raw),{signal:controller.signal}));}catch(e){send(res,503,{error:e.message});}});return;}
